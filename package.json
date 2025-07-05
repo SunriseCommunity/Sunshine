@@ -1,0 +1,31 @@
+{
+  "name": "sunshinediscordbot",
+  "type": "module",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "bun src/index.js",
+    "dev": "bun src/index.js --watch",
+    "generate:openapi": "dotenv -e .env -- openapi-ts"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.78.1",
+    "@types/bun": "latest",
+    "dotenv-cli": "^8.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@sapphire/decorators": "^6.2.0",
+    "@sapphire/discord.js-utilities": "^7.3.3",
+    "@sapphire/framework": "^5.3.6",
+    "@sapphire/plugin-logger": "^4.1.0",
+    "@sapphire/plugin-subcommands": "^7.0.1",
+    "@sapphire/plugin-utilities-store": "^2.0.3",
+    "@sapphire/time-utilities": "^1.7.14",
+    "@sapphire/utilities": "^3.18.2",
+    "discord.js": "^14.21.0",
+    "fast-average-color-node": "^3.1.0"
+  }
+}
