@@ -4,8 +4,8 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "start": "bun src/index.js",
-    "dev": "bun src/index.js --watch",
+    "start": "bun src/index.ts",
+    "dev": "bun --watch src/index.ts",
     "generate:openapi": "dotenv -e .env -- openapi-ts"
   },
   "devDependencies": {
