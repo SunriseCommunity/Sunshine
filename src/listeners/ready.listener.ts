@@ -1,6 +1,6 @@
 import { ApplyOptions } from "@sapphire/decorators"
 import { Events, Listener } from "@sapphire/framework"
-import type { Client } from "discord.js"
+import { ActivityType, type Client } from "discord.js"
 
 @ApplyOptions<Listener.Options>({ event: Events.ClientReady, once: true })
 export class ReadyListener extends Listener {
@@ -8,5 +8,9 @@ export class ReadyListener extends Listener {
     const { username, id } = client.user!
 
     this.container.logger.info(`⛅ Successfully logged in as ${username} (${id})`)
+    this.container.client.user?.setPresence({
+      activities: [{ type: ActivityType.Playing, name: "osu!" }],
+      status: "online",
+    })
   }
 }
