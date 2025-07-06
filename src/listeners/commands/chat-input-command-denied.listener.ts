@@ -6,7 +6,7 @@ import { MessageFlags, time } from "discord.js"
 @ApplyOptions<Listener.Options>({
   name: Events.ChatInputCommandDenied,
 })
-export class ChatInputCommandDenied extends Listener {
+export class ChatInputCommandDeniedListener extends Listener {
   public override async run(
     { context, message: content, identifier }: UserError,
     { interaction }: ChatInputCommandDeniedPayload,
