@@ -10,6 +10,7 @@ import { GatewayIntentBits } from "discord.js"
 import { config } from "./lib/configs/env"
 import { client as apiClient } from "./lib/types/api/client.gen"
 import type { WebSocketEventType } from "./lib/types/api"
+import { db } from "./database"
 
 export class SunshineClient extends SapphireClient {
   private websocketHeartbeatTimeout: NodeJS.Timeout | null = null
@@ -37,6 +38,7 @@ export class SunshineClient extends SapphireClient {
     apiClient.setConfig({ baseUrl: "https://" + this.serverApiURI })
 
     container.config = config
+    container.db = db
   }
 
   private initWebsocket() {
