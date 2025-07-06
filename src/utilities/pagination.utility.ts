@@ -119,7 +119,8 @@ export class PaginationUtility extends Utility {
     buttonsRow.setComponents(
       ButtonBuilder.from(this.buttonMaxLeft.toJSON()).setDisabled(isOnFirstPage),
       ButtonBuilder.from(this.buttonLeft.toJSON()).setDisabled(isOnFirstPage),
-      ButtonBuilder.from(this.buttonSelectPage.toJSON()).setDisabled(isOnFirstPage && isOnLastPage),
+      // TODO: Implement
+      // ButtonBuilder.from(this.buttonSelectPage.toJSON()).setDisabled(isOnFirstPage && isOnLastPage),
     )
 
     buttonsRow.addComponents(
