@@ -62,7 +62,7 @@ export async function chatInputRunScoreSubcommand(
 
   if (!beatmap || beatmap.error) {
     this.container.client.logger.error(
-      `ScoreSubcommand: Couldn't fetch score's (id: ${score.id})beatmap (id: ${score.beatmap_id}).`,
+      `ScoreSubcommand: Couldn't fetch score's (id: ${score.id}) beatmap (id: ${score.beatmap_id}).`,
     )
     return await interaction.editReply({
       embeds: [embedPresets.getErrorEmbed(`❓ I couldn't fetch score's beatmap data`)],

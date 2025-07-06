@@ -14,8 +14,12 @@ import {
   addUnlinkSubcommand,
   chatInputRunUnlinkSubcommand,
 } from "../subcommands/osu/unlink.subcommand"
+import {
+  addRecentScoreSubcommand,
+  chatInputRunRecentScoreSubcommand,
+} from "../subcommands/osu/recent-score.subcommand"
 
-const COMMANDS = ["profile", "score", "link", "unlink"]
+const COMMANDS = ["profile", "score", "link", "unlink", "rs"]
 
 @ApplyOptions<Subcommand.Options>({
   subcommands: [
@@ -34,7 +38,8 @@ export class OsuCommand extends Subcommand {
         .addSubcommand(addProfileSubcommand)
         .addSubcommand(addScoreSubcommand)
         .addSubcommand(addLinkSubcommand)
-        .addSubcommand(addUnlinkSubcommand),
+        .addSubcommand(addUnlinkSubcommand)
+        .addSubcommand(addRecentScoreSubcommand),
     )
   }
 
@@ -49,4 +54,7 @@ export class OsuCommand extends Subcommand {
 
   public unlink = (interaction: Subcommand.ChatInputCommandInteraction) =>
     chatInputRunUnlinkSubcommand.call(this, interaction)
+
+  public rs = (interaction: Subcommand.ChatInputCommandInteraction) =>
+    chatInputRunRecentScoreSubcommand.call(this, interaction)
 }
