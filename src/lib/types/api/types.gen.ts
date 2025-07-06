@@ -108,6 +108,13 @@ export type ChangePasswordRequest = {
     new_password: string;
 };
 
+export type CustomBeatmapStatusChangeResponse = {
+    beatmap: BeatmapResponse;
+    new_status: BeatmapStatusWeb;
+    old_status: BeatmapStatusWeb;
+    bat: UserResponse;
+};
+
 export type DifficultyAttributes = {
     aim?: number | null;
     aimDifficultStrainCount?: number | null;

@@ -1,8 +1,10 @@
 import { ApplyOptions } from "@sapphire/decorators"
 import { Utility } from "@sapphire/plugin-utilities-store"
 import {
+  BeatmapStatusWeb,
   getBeatmapByIdPp,
   type BeatmapResponse,
+  type CustomBeatmapStatusChangeResponse,
   type ScoreResponse,
   type UserResponse,
   type UserStatsResponse,
@@ -13,8 +15,9 @@ import { config } from "../lib/configs/env"
 import { getDuration } from "../lib/utils/text-conversion/get-duration.util"
 import { getAverageColor } from "fast-average-color-node"
 import { tryToGetImage } from "../lib/utils/fetch.util"
-import { getScoreRankEmoji } from "../lib/utils/osu/emoji.util"
+import getBeatmapStatusIcon, { getScoreRankEmoji } from "../lib/utils/osu/emoji.util"
 import { getBeatmapStarRating } from "../lib/utils/osu/star-rating.util"
+import { secondsToMinutes } from "../lib/utils/text-conversion/seconds-to.util"
 
 @ApplyOptions<Utility.Options>({ name: "embedPresets" })
 export class EmbedPresetsUtility extends Utility {
@@ -199,6 +202,108 @@ export class EmbedPresetsUtility extends Utility {
         text: `${score.game_mode_extended} · played on osu!sunrise`,
       })
       .setDescription(description)
+
+    return scoreEmbed
+  }
+
+  public async getCustomBeatmapStatusChangeEmbed(data: CustomBeatmapStatusChangeResponse) {
+    const { bat, beatmap, new_status, old_status } = data
+
+    const beatmapBannerImage = await tryToGetImage(
+      `https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`,
+      "https://osu.ppy.sh/assets/images/default-bg.7594e945.png",
+    )
+
+    const color = await getAverageColor(beatmapBannerImage)
+
+    const pp = await getBeatmapByIdPp({
+      path: {
+        id: beatmap.id,
+      },
+    })
+
+    if (!pp || pp.error) {
+      throw new Error("EmbedPresetsUtility: Couldn't fetch beatmap performance data")
+    }
+
+    const ppFields = beatmap.ranked
+      ? [
+          {
+            name: ` `,
+            value: ` `,
+            inline: false,
+          },
+          {
+            name: `Performance points for ${config.json.emojis.ranks.SH}`,
+            value: `**${pp.data.pp.toFixed(2)} pp**`,
+            inline: true,
+          },
+        ]
+      : []
+
+    const scoreEmbed = new EmbedBuilder()
+      .setAuthor({
+        name: `${bat.username} · beatmap status update`,
+        iconURL: bat.avatar_url,
+        url: `https://${config.sunrise.uri}/user/${bat.user_id}`,
+      })
+      .setColor(`${color.hex}` as HexColorString)
+      .setTitle(
+        `${beatmap.artist} - ${beatmap.title}` +
+          " " +
+          `[${beatmap.version}] [★${getBeatmapStarRating(beatmap, beatmap.mode)}]`,
+      )
+      .setImage(beatmapBannerImage)
+      .setURL(`https://${config.sunrise.uri}/beatmaps/${beatmap.id}`)
+      .setFooter({
+        text: `${beatmap.mode} · osu!sunrise`,
+      })
+      .setFields(
+        {
+          name: bold("New beatmap status"),
+          value: `${getBeatmapStatusIcon(new_status)} ${bold(new_status)}`,
+          inline: true,
+        },
+        {
+          name: "Previous beatmap status",
+          value: `${getBeatmapStatusIcon(old_status)} ${old_status}`,
+          inline: true,
+        },
+        ...ppFields,
+        {
+          name: ` `,
+          value: ` `,
+          inline: false,
+        },
+        {
+          name: "Length",
+          value: `${config.json.emojis.totalLengthIcon} ${secondsToMinutes(beatmap.total_length, {
+            asHours: true,
+            pad: true,
+          })}`,
+          inline: true,
+        },
+        {
+          name: "BPM",
+          value: `${config.json.emojis.bpmIcon} ${beatmap.bpm}`,
+          inline: true,
+        },
+        {
+          name: ` `,
+          value: ` `,
+          inline: false,
+        },
+        {
+          name: "Circle Count",
+          value: `${config.json.emojis.countCirclesIcon} ${beatmap.count_circles}`,
+          inline: true,
+        },
+        {
+          name: "Slider Count",
+          value: `${config.json.emojis.countSlidersIcon} ${beatmap.count_sliders}`,
+          inline: true,
+        },
+      )
 
     return scoreEmbed
   }

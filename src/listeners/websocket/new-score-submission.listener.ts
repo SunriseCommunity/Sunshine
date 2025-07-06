@@ -7,24 +7,26 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js"
   event: WebSocketEventType.NEW_SCORE_SUBMITTED,
   emitter: container.client.ws,
 })
-export class NewScoreListener extends Listener {
+export class NewScoreSubmissionListener extends Listener {
   public async run(score: ScoreResponse) {
     const { newScoresChannel } = this.container.config.ids
     if (!newScoresChannel) return
 
     this.container.client.logger.info(
-      `NewScoreListener: New score (id: ${score.id}) submitted, trying to send embed to scores channel.`,
+      `NewScoreSubmissionListener: New score (id: ${score.id}) submitted, trying to send embed to scores channel.`,
     )
 
     const scoresChannel = await this.container.client.channels
       .fetch(newScoresChannel.toString())
       .catch(() =>
-        this.container.client.logger.error("NewScoreListener: Couldn't fetch scores channel"),
+        this.container.client.logger.error(
+          "NewScoreSubmissionListener: Couldn't fetch scores channel",
+        ),
       )
 
     if (!scoresChannel || !scoresChannel.isSendable()) {
       this.container.client.logger.error(
-        `NewScoreListener: Can't send new score embed. Check if scores channel ${newScoresChannel} exists.`,
+        `NewScoreSubmissionListener: Can't send new score embed. Check if scores channel ${newScoresChannel} exists.`,
       )
       return
     }
@@ -37,7 +39,7 @@ export class NewScoreListener extends Listener {
 
     if (!beatmap || beatmap.error) {
       this.container.client.logger.error(
-        `NewScoreListener: Couldn't fetch score's (id: ${score.id}) beatmap (id: ${score.beatmap_id}).`,
+        `NewScoreSubmissionListener: Couldn't fetch score's (id: ${score.id}) beatmap (id: ${score.beatmap_id}).`,
       )
       return
     }

@@ -6,6 +6,7 @@ export interface IConfig {
   }
   ids: {
     newScoresChannel: string | undefined
+    beatmapsEventsChannel: string | undefined
   }
   sunrise: {
     uri: string
@@ -49,6 +50,7 @@ export const config: IConfig = {
   },
   ids: {
     newScoresChannel: process.env["NEW_SCORES_CHANNED_ID"] ?? undefined,
+    beatmapsEventsChannel: process.env["BEATMAPS_STATUSES_CHANNED_ID"] ?? undefined,
   },
   environment: ["prod", "dev"].includes(process.env.NODE_ENV ?? "")
     ? (process.env.NODE_ENV as any)
