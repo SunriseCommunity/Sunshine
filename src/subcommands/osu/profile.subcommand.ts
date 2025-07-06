@@ -39,16 +39,23 @@ export async function chatInputRunProfileSubcommand(
 
   let userResponse = null
 
+  const { embedPresets } = this.container.utilities
+
   if (userUsernameOption) {
     const userSearchResponse = await getUserSearch({
       query: { limit: 1, page: 1, query: userUsernameOption },
     })
 
-    if (userSearchResponse.error || userSearchResponse.data.length < 0) {
-      await interaction.editReply(
-        userSearchResponse.error ? userSearchResponse.error.error : "Couldn't fetch user!",
-      )
-      return
+    if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
+      return await interaction.editReply({
+        embeds: [
+          embedPresets.getErrorEmbed(
+            userSearchResponse.error
+              ? userSearchResponse.error.error
+              : "❓ I couldn't find user with such username",
+          ),
+        ],
+      })
     }
 
     userIdOption = userSearchResponse.data[0]?.user_id ?? null
@@ -60,19 +67,36 @@ export async function chatInputRunProfileSubcommand(
     })
   }
 
-  if (userDiscordOption && userResponse == null) {
-    // TODO: also try to fetch yourself if no userDiscordOption is provided;
-    throw new Error("TODO")
+  if (userResponse == null) {
+    const { db } = this.container
+
+    const row = db.query("SELECT osu_user_id FROM connections WHERE discord_user_id = $1").get({
+      $1: userDiscordOption ? userDiscordOption.id : interaction.user.id,
+    }) as null | { osu_user_id: number }
+
+    if (!row || !row.osu_user_id) {
+      return await interaction.editReply({
+        embeds: [
+          embedPresets.getErrorEmbed(`❓ Provided user didn't link their osu!sunrise account`),
+        ],
+      })
+    }
+
+    userResponse = await getUserByIdByMode({
+      path: { id: row.osu_user_id, mode: gamemodeOption ?? GameMode.STANDARD },
+    })
   }
 
   if (!userResponse || userResponse.error) {
-    await interaction.editReply(
-      userResponse?.error ? userResponse.error.error : "Couldn't fetch user!",
-    )
-    return
+    return await interaction.editReply({
+      embeds: [
+        embedPresets.getErrorEmbed(
+          userResponse?.error ? userResponse.error.error : "Couldn't fetch requested user!",
+        ),
+      ],
+    })
   }
 
-  const { embedPresets } = this.container.utilities
   const { user, stats } = userResponse.data
 
   const userEmbed = await embedPresets.getUserEmbed(user, stats!)
