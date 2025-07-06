@@ -1,7 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators"
 import { Utility } from "@sapphire/plugin-utilities-store"
 import {
-  BeatmapStatusWeb,
+  GameMode,
   getBeatmapByIdPp,
   type BeatmapResponse,
   type CustomBeatmapStatusChangeResponse,
@@ -167,8 +167,22 @@ export class EmbedPresetsUtility extends Utility {
 
     var titleText = isScoreNew ? "new score submission" : "submitted score"
 
-    // TODO: Get conts depending on the gamemode
-    const hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`
+    let hitCounts = null
+
+    switch (score.game_mode) {
+      case GameMode.STANDARD:
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`
+        break
+      case GameMode.TAIKO:
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_miss}]`
+        break
+      case GameMode.CATCH_THE_BEAT:
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`
+        break
+      case GameMode.MANIA:
+        hitCounts = `[${score.count_geki}/${score.count_300}/${score.count_katu}/${score.count_100}/${score.count_50}/${score.count_miss}]`
+        break
+    }
 
     const description =
       `${getScoreRankEmoji(score.grade)} ${score.mods}` +
@@ -179,7 +193,7 @@ export class EmbedPresetsUtility extends Utility {
       "\n" +
       `${bold(beatmap.is_ranked ? score.performance_points.toFixed(2) : "~ ")}pp` +
       " · " +
-      `${bold("x" + score.max_combo)} / ${bold(beatmap.max_combo.toString())}` +
+      `${bold("x" + score.max_combo)} / ${beatmap.max_combo}` +
       " · " +
       hitCounts
 
