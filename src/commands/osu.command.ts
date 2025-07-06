@@ -9,8 +9,13 @@ import {
   addScoreSubcommand,
   chatInputRunScoreSubcommand,
 } from "../subcommands/osu/score.subcommand"
+import { addLinkSubcommand, chatInputRunLinkSubcommand } from "../subcommands/osu/link.subcommand"
+import {
+  addUnlinkSubcommand,
+  chatInputRunUnlinkSubcommand,
+} from "../subcommands/osu/unlink.subcommand"
 
-const COMMANDS = ["profile", "score"]
+const COMMANDS = ["profile", "score", "link", "unlink"]
 
 @ApplyOptions<Subcommand.Options>({
   subcommands: [
@@ -27,7 +32,9 @@ export class OsuCommand extends Subcommand {
         .setName("osu")
         .setDescription("Server's commands")
         .addSubcommand(addProfileSubcommand)
-        .addSubcommand(addScoreSubcommand),
+        .addSubcommand(addScoreSubcommand)
+        .addSubcommand(addLinkSubcommand)
+        .addSubcommand(addUnlinkSubcommand),
     )
   }
 
@@ -36,4 +43,10 @@ export class OsuCommand extends Subcommand {
 
   public score = async (interaction: Subcommand.ChatInputCommandInteraction) =>
     chatInputRunScoreSubcommand.call(this, interaction)
+
+  public link = async (interaction: Subcommand.ChatInputCommandInteraction) =>
+    chatInputRunLinkSubcommand.call(this, interaction)
+
+  public unlink = (interaction: Subcommand.ChatInputCommandInteraction) =>
+    chatInputRunUnlinkSubcommand.call(this, interaction)
 }
