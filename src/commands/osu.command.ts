@@ -8,6 +8,7 @@ import * as score from "../subcommands/osu/score.subcommand"
 import * as link from "../subcommands/osu/link.subcommand"
 import * as unlink from "../subcommands/osu/unlink.subcommand"
 import * as recentScore from "../subcommands/osu/recent-score.subcommand"
+import * as scores from "../subcommands/osu/scores.subcommand"
 
 const rawModules = [
   { add: profile.addProfileSubcommand, run: profile.chatInputRunProfileSubcommand },
@@ -15,6 +16,7 @@ const rawModules = [
   { add: link.addLinkSubcommand, run: link.chatInputRunLinkSubcommand },
   { add: unlink.addUnlinkSubcommand, run: unlink.chatInputRunUnlinkSubcommand },
   { add: recentScore.addRecentScoreSubcommand, run: recentScore.chatInputRunRecentScoreSubcommand },
+  { add: scores.addScoresSubcommand, run: scores.chatInputRunScoresSubcommand },
 ]
 
 const subcommandModules = rawModules.map((cmd) => {
