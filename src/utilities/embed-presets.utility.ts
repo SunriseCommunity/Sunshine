@@ -18,17 +18,19 @@ import { getBeatmapStarRating } from "../lib/utils/osu/star-rating.util"
 
 @ApplyOptions<Utility.Options>({ name: "embedPresets" })
 export class EmbedPresetsUtility extends Utility {
-  public getSuccessEmbed(Title: string) {
+  public getSuccessEmbed(Title: string, message?: string) {
     const createEmbed = new EmbedBuilder()
       .setTitle(Title.slice(0, 255))
+      .setDescription(message ?? null)
       .setColor("Green")
       .setTimestamp()
     return createEmbed
   }
 
-  public getErrorEmbed(Title: string) {
+  public getErrorEmbed(Title: string, message?: string) {
     const createEmbed = new EmbedBuilder()
       .setTitle(Title.slice(0, 255))
+      .setDescription(message ?? null)
       .setColor("Red")
       .setFooter({ text: "Im sorry! >.<" })
       .setTimestamp()

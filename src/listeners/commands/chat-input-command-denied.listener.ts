@@ -21,7 +21,8 @@ export class ChatInputCommandDenied extends Listener {
       const { embedPresets } = this.container.utilities
 
       const cooldownEmbed = embedPresets.getErrorEmbed(
-        `Hold up! 😵‍💫 You are too fast for me! You can request again at ${time(
+        "Hold up!",
+        `😵‍💫 You are too fast for me! You can request again in ${time(
           Math.floor((Date.now() + remaining) / 1000),
           "R",
         )}`,
