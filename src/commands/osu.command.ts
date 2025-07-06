@@ -1,60 +1,58 @@
 import { Command } from "@sapphire/framework"
 import { Subcommand } from "@sapphire/plugin-subcommands"
-import {
-  addProfileSubcommand,
-  chatInputRunProfileSubcommand,
-} from "../subcommands/osu/profile.subcommand"
 import { ApplyOptions } from "@sapphire/decorators"
-import {
-  addScoreSubcommand,
-  chatInputRunScoreSubcommand,
-} from "../subcommands/osu/score.subcommand"
-import { addLinkSubcommand, chatInputRunLinkSubcommand } from "../subcommands/osu/link.subcommand"
-import {
-  addUnlinkSubcommand,
-  chatInputRunUnlinkSubcommand,
-} from "../subcommands/osu/unlink.subcommand"
-import {
-  addRecentScoreSubcommand,
-  chatInputRunRecentScoreSubcommand,
-} from "../subcommands/osu/recent-score.subcommand"
+import { SlashCommandSubcommandBuilder } from "discord.js"
 
-const COMMANDS = ["profile", "score", "link", "unlink", "rs"]
+import * as profile from "../subcommands/osu/profile.subcommand"
+import * as score from "../subcommands/osu/score.subcommand"
+import * as link from "../subcommands/osu/link.subcommand"
+import * as unlink from "../subcommands/osu/unlink.subcommand"
+import * as recentScore from "../subcommands/osu/recent-score.subcommand"
+
+const rawModules = [
+  { add: profile.addProfileSubcommand, run: profile.chatInputRunProfileSubcommand },
+  { add: score.addScoreSubcommand, run: score.chatInputRunScoreSubcommand },
+  { add: link.addLinkSubcommand, run: link.chatInputRunLinkSubcommand },
+  { add: unlink.addUnlinkSubcommand, run: unlink.chatInputRunUnlinkSubcommand },
+  { add: recentScore.addRecentScoreSubcommand, run: recentScore.chatInputRunRecentScoreSubcommand },
+]
+
+const subcommandModules = rawModules.map((cmd) => {
+  const builder = new SlashCommandSubcommandBuilder()
+  const subcommandName = cmd.add(builder).name
+
+  const camelName = subcommandName.replace(/-(\w)/g, (_, letter) => letter.toUpperCase())
+  return { ...cmd, name: subcommandName, camelName }
+})
+
+const subcommandOptions = subcommandModules.map((cmd) => ({
+  name: cmd.name,
+  chatInputRun: cmd.camelName,
+}))
 
 @ApplyOptions<Subcommand.Options>({
-  subcommands: [
-    ...COMMANDS.map((cmd) => ({
-      name: cmd,
-      chatInputRun: cmd.replace(/-(\w)/g, (_, letter) => letter.toUpperCase()),
-    })),
-  ],
+  subcommands: subcommandOptions,
 })
 export class OsuCommand extends Subcommand {
   public override registerApplicationCommands(registry: Command.Registry) {
-    registry.registerChatInputCommand((builder) =>
-      builder
-        .setName("osu")
-        .setDescription("Server's commands")
-        .addSubcommand(addProfileSubcommand)
-        .addSubcommand(addScoreSubcommand)
-        .addSubcommand(addLinkSubcommand)
-        .addSubcommand(addUnlinkSubcommand)
-        .addSubcommand(addRecentScoreSubcommand),
-    )
+    registry.registerChatInputCommand((builder) => {
+      const osu = builder.setName("osu").setDescription("Server's commands")
+
+      for (const cmd of subcommandModules) {
+        osu.addSubcommand(cmd.add)
+      }
+
+      return osu
+    })
   }
 
-  public profile = async (interaction: Subcommand.ChatInputCommandInteraction) =>
-    chatInputRunProfileSubcommand.call(this, interaction)
+  constructor(context: Subcommand.LoaderContext, options: Subcommand.Options) {
+    super(context, options)
 
-  public score = async (interaction: Subcommand.ChatInputCommandInteraction) =>
-    chatInputRunScoreSubcommand.call(this, interaction)
-
-  public link = async (interaction: Subcommand.ChatInputCommandInteraction) =>
-    chatInputRunLinkSubcommand.call(this, interaction)
-
-  public unlink = (interaction: Subcommand.ChatInputCommandInteraction) =>
-    chatInputRunUnlinkSubcommand.call(this, interaction)
-
-  public rs = (interaction: Subcommand.ChatInputCommandInteraction) =>
-    chatInputRunRecentScoreSubcommand.call(this, interaction)
+    for (const cmd of subcommandModules) {
+      ;(this as any)[cmd.name] = async (interaction: Subcommand.ChatInputCommandInteraction) => {
+        return cmd.run.call(this, interaction)
+      }
+    }
+  }
 }
