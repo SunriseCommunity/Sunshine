@@ -8,9 +8,8 @@ import {
 import { Time } from "@sapphire/time-utilities"
 import { GatewayIntentBits } from "discord.js"
 import { config } from "./lib/configs/env"
-import { CUSTOM_EVENTS } from "./lib/types/custom-events.types"
-import { WebSocketEventType } from "./lib/types/websocket.types"
 import { client as apiClient } from "./lib/types/api/client.gen"
+import type { WebSocketEventType } from "./lib/types/api"
 
 export class SunshineClient extends SapphireClient {
   private websocketHeartbeatTimeout: NodeJS.Timeout | null = null
@@ -60,35 +59,29 @@ export class SunshineClient extends SapphireClient {
       container.logger.error(`Server's Websocket:`, e)
     })
 
-    container.sunrise.websocket.addEventListener("close", () => {
+    container.sunrise.websocket.addEventListener("close", (e) => {
       if (this.websocketHeartbeatTimeout) clearTimeout(this.websocketHeartbeatTimeout)
 
-      container.logger.error(`Server's Websocket: Connection Closed. Trying to reconnect`)
+      container.logger.error(
+        `Server's Websocket: Connection Closed: "${e.reason}". Trying to reconnect`,
+      )
 
       setTimeout(this.initWebsocket.bind(this), 5 * Time.Second)
     })
 
-    container.sunrise.websocket.addEventListener("message", (evenet) => {
-      const { data: dataRaw } = evenet
+    container.sunrise.websocket.addEventListener("message", (e) => {
+      const { data: dataRaw } = e
 
       const data = JSON.parse(dataRaw) as {
-        type: WebSocketEventType | undefined
+        type: WebSocketEventType
         data: any
       }
 
-      if (data.type === undefined || !data.data) {
+      if (!data.type || !data.data) {
         return
       }
 
-      const eventMap = {
-        [WebSocketEventType.NewScoreSubmitted]: CUSTOM_EVENTS.NewScore,
-        [WebSocketEventType.CustomBeatmapStatusChanged]: CUSTOM_EVENTS.CustomBeatmapStatusChange,
-      }
-
-      const eventName = eventMap[data.type]
-      if (eventName) {
-        container.client.ws.emit(eventName, data.data)
-      }
+      container.client.ws.emit(data.type, data.data)
     })
   }
 }

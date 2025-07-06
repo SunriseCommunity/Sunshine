@@ -1,11 +1,10 @@
 import { ApplyOptions } from "@sapphire/decorators"
 import { container, Listener } from "@sapphire/framework"
-import { CUSTOM_EVENTS } from "../../lib/types/custom-events.types"
-import { getBeatmapById, type ScoreResponse } from "../../lib/types/api"
+import { getBeatmapById, WebSocketEventType, type ScoreResponse } from "../../lib/types/api"
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js"
 
 @ApplyOptions<Listener.Options>({
-  event: CUSTOM_EVENTS.NewScore,
+  event: WebSocketEventType.NEW_SCORE_SUBMITTED,
   emitter: container.client.ws,
 })
 export class NewScoreListener extends Listener {

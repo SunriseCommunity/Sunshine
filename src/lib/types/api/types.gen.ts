@@ -569,6 +569,16 @@ export type UsernameChangeRequest = {
     new_username: string;
 };
 
+export enum WebSocketEventType {
+    NEW_SCORE_SUBMITTED = 'NewScoreSubmitted',
+    CUSTOM_BEATMAP_STATUS_CHANGED = 'CustomBeatmapStatusChanged'
+}
+
+export type WebSocketMessage = {
+    messageType: WebSocketEventType;
+    readonly data: string;
+};
+
 export type PostAuthTokenData = {
     body?: TokenRequest;
     path?: never;
@@ -2165,6 +2175,22 @@ export type PostUserUsernameChangeResponses = {
     200: unknown;
 };
 
+export type GetWsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/ws';
+};
+
+export type GetWsResponses = {
+    /**
+     * OK
+     */
+    200: WebSocketMessage;
+};
+
+export type GetWsResponse = GetWsResponses[keyof GetWsResponses];
+
 export type ClientOptions = {
-    baseUrl: 'https://api.sunrize.uk' | (string & {});
+    baseUrl: 'https://api.sunrise.local' | (string & {});
 };
