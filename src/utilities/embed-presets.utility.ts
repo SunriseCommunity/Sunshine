@@ -3,6 +3,9 @@ import { Utility } from "@sapphire/plugin-utilities-store"
 import {
   GameMode,
   getBeatmapByIdPp,
+  getUserByIdGrades,
+  getUserByIdScores,
+  ScoreTableType,
   type BeatmapResponse,
   type CustomBeatmapStatusChangeResponse,
   type ScoreResponse,
@@ -41,6 +44,31 @@ export class EmbedPresetsUtility extends Utility {
   }
 
   public async getUserEmbed(user: UserResponse, stats: UserStatsResponse) {
+    const [topScoresResult, userGradesResult] = await Promise.all([
+      getUserByIdScores({
+        path: { id: user.user_id },
+        query: {
+          limit: 1,
+          mode: stats.gamemode,
+          type: ScoreTableType.TOP,
+        },
+      }),
+      getUserByIdGrades({
+        path: { id: user.user_id },
+        query: { mode: stats.gamemode },
+      }),
+    ])
+
+    if (!topScoresResult || topScoresResult.error) {
+      throw new Error("EmbedPresetsUtility: Couldn't fetch user's top scores")
+    }
+
+    if (!userGradesResult || userGradesResult.error) {
+      throw new Error("EmbedPresetsUtility: Couldn't fetch user's grades")
+    }
+
+    const firstPlacesCount = topScoresResult.data?.total_count ?? 0
+
     const color = await getAverageColor(user.avatar_url)
 
     const lastOnlineTime = new Date(user.last_online_time)
@@ -115,6 +143,9 @@ export class EmbedPresetsUtility extends Utility {
       return pr
     }, "")
 
+    const { A, S, SH, X, XH } = this.container.config.json.emojis.ranks
+    const { count_a, count_s, count_sh, count_x, count_xh } = userGradesResult.data
+
     const userEmbed = new EmbedBuilder()
       .setAuthor({
         name: `${user.username} · user profile`,
@@ -124,6 +155,18 @@ export class EmbedPresetsUtility extends Utility {
       .setColor(`${color.hex}` as HexColorString)
       .setThumbnail(user.avatar_url)
       .setDescription(description)
+      .setFields([
+        {
+          name: "Grades",
+          value: `${XH}${count_xh}${X}${count_x}${SH}${count_sh}${S}${count_s}${A}${count_a}`,
+          inline: true,
+        },
+        {
+          name: "First places",
+          value: firstPlacesCount.toString(),
+          inline: true,
+        },
+      ])
       .setFooter({
         text: `${stats.gamemode} · osu!sunrise`,
       })
