@@ -2,6 +2,7 @@ import Database from "bun:sqlite"
 import type { IConfig } from "./src/lib/configs/env"
 import type { EmbedPresetsUtility } from "./src/utilities/embed-presets.utility"
 import type { PaginationUtility } from "./src/utilities/pagination.utility"
+import type { ActionStoreUtility } from "./src/utilities/action-store.utility"
 
 declare module "@sapphire/pieces" {
   interface Container {
@@ -16,6 +17,7 @@ declare module "@sapphire/pieces" {
 declare module "@sapphire/plugin-utilities-store" {
   interface Utilities {
     embedPresets: EmbedPresetsUtility
+    actionStore: ActionStoreUtility
     pagination: PaginationUtility
   }
 }

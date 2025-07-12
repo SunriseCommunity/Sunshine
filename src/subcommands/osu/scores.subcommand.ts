@@ -123,7 +123,7 @@ export async function chatInputRunScoresSubcommand(
     scoresTypeOption,
   )
 
-  await pagination.createPaginationCollector(interaction, handlePagination, {
+  await pagination.createPaginationHandler(interaction, handlePagination, {
     pageSize: 10,
     currentPage: 1,
     totalPages: 0,

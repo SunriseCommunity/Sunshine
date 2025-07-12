@@ -8,36 +8,24 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
 } from "discord.js"
-import { PaginationButton } from "../lib/types/pagination.types"
+import { PaginationButtonAction } from "../lib/types/enum/pagination.types"
+import { buildCustomId } from "../lib/utils/discord.util"
+import type { PaginationStore } from "../lib/types/store.types"
+import { PaginationInteractionCustomId } from "../lib/types/enum/custom-ids.types"
 
 @ApplyOptions<Utility.Options>({ name: "pagination" })
 export class PaginationUtility extends Utility {
-  private readonly buttonMaxLeft = new ButtonBuilder()
-    .setCustomId(PaginationButton.MAX_LEFT)
-    .setLabel("⏮️")
-    .setStyle(ButtonStyle.Primary)
+  private readonly buttonMaxLeft = new ButtonBuilder().setLabel("⏮️").setStyle(ButtonStyle.Primary)
+  private readonly buttonLeft = new ButtonBuilder().setLabel("⬅️").setStyle(ButtonStyle.Primary)
 
-  private readonly buttonLeft = new ButtonBuilder()
-    .setCustomId(PaginationButton.LEFT)
-    .setLabel("⬅️")
-    .setStyle(ButtonStyle.Primary)
+  private readonly buttonRight = new ButtonBuilder().setLabel("➡️").setStyle(ButtonStyle.Primary)
+  private readonly buttonMaxRight = new ButtonBuilder().setLabel("⏭️").setStyle(ButtonStyle.Primary)
 
   private readonly buttonSelectPage = new ButtonBuilder()
-    .setCustomId(PaginationButton.SELECT_PAGE)
     .setLabel("*️⃣")
     .setStyle(ButtonStyle.Primary)
 
-  private readonly buttonRight = new ButtonBuilder()
-    .setCustomId(PaginationButton.RIGHT)
-    .setLabel("➡️")
-    .setStyle(ButtonStyle.Primary)
-
-  private readonly buttonMaxRight = new ButtonBuilder()
-    .setCustomId(PaginationButton.MAX_RIGHT)
-    .setLabel("⏭️")
-    .setStyle(ButtonStyle.Primary)
-
-  public async createPaginationCollector(
+  public async createPaginationHandler(
     interaction: ChatInputCommandInteraction,
     handleSetPage: (state: {
       pageSize: number
@@ -57,58 +45,38 @@ export class PaginationUtility extends Utility {
     }
 
     const updatedEmbed = await handleSetPage(state)
-    const buttonsRow = this.getPaginationButtonsRow(state)
 
-    const message = await interaction.editReply({
+    const handleSetPageWrapped = async (state: {
+      pageSize: number
+      totalPages: number
+      currentPage: number
+    }) => ({
+      buttonsRow: this.getPaginationButtonsRow(interaction.user.id, storeId, state),
+      embed: await handleSetPage(state),
+    })
+
+    const storeId = this.container.utilities.actionStore.set<PaginationStore>({
+      handleSetPage: handleSetPageWrapped,
+      state,
+    })
+
+    const buttonsRow = this.getPaginationButtonsRow(interaction.user.id, storeId, state)
+
+    await interaction.editReply({
       embeds: [updatedEmbed],
       components: [buttonsRow],
     })
-
-    const { embedPresets } = this.container.utilities
-
-    message.createMessageComponentCollector().on("collect", async (reply) => {
-      await reply.deferUpdate()
-
-      switch (reply.customId) {
-        case PaginationButton.MAX_LEFT:
-          state.currentPage = 1
-          break
-        case PaginationButton.LEFT:
-          state.currentPage--
-          break
-        case PaginationButton.SELECT_PAGE:
-          // TODO!
-          break
-        case PaginationButton.RIGHT:
-          state.currentPage++
-          break
-        case PaginationButton.MAX_RIGHT:
-          state.currentPage = state.totalPages
-          break
-        default:
-          throw new Error("Unexpected customId for pagination")
-      }
-
-      await reply.editReply({
-        embeds: [embedPresets.getSuccessEmbed("⌛ Please wait...")],
-        components: [],
-      })
-
-      const updatedEmbed = await handleSetPage(state)
-      const buttonsRow = this.getPaginationButtonsRow(state)
-
-      await reply.editReply({
-        embeds: [updatedEmbed],
-        components: [buttonsRow],
-      })
-    })
   }
 
-  private getPaginationButtonsRow(options: {
-    pageSize: number
-    currentPage: number
-    totalPages: number
-  }) {
+  private getPaginationButtonsRow(
+    userId: string,
+    storeId: string,
+    options: {
+      pageSize: number
+      currentPage: number
+      totalPages: number
+    },
+  ) {
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>()
 
     const { currentPage, totalPages } = options
@@ -116,16 +84,32 @@ export class PaginationUtility extends Utility {
     const isOnFirstPage = currentPage <= 1
     const isOnLastPage = currentPage >= totalPages
 
+    const getCustomPaginationButtonId = (buttonData: string) =>
+      buildCustomId(PaginationInteractionCustomId.PAGINATION_ACTION_MOVE, userId, {
+        dataStoreId: storeId,
+        data: [buttonData],
+      })
+
     buttonsRow.setComponents(
-      ButtonBuilder.from(this.buttonMaxLeft.toJSON()).setDisabled(isOnFirstPage),
-      ButtonBuilder.from(this.buttonLeft.toJSON()).setDisabled(isOnFirstPage),
-      // TODO: Implement
-      // ButtonBuilder.from(this.buttonSelectPage.toJSON()).setDisabled(isOnFirstPage && isOnLastPage),
+      ButtonBuilder.from(this.buttonMaxLeft.toJSON())
+        .setCustomId(getCustomPaginationButtonId(PaginationButtonAction.MAX_LEFT))
+        .setDisabled(isOnFirstPage),
+      ButtonBuilder.from(this.buttonLeft.toJSON())
+        .setCustomId(getCustomPaginationButtonId(PaginationButtonAction.LEFT))
+        .setDisabled(isOnFirstPage),
+
+      ButtonBuilder.from(this.buttonSelectPage.toJSON())
+        .setCustomId(getCustomPaginationButtonId(PaginationButtonAction.SELECT_PAGE))
+        .setDisabled(isOnFirstPage && isOnLastPage),
     )
 
     buttonsRow.addComponents(
-      ButtonBuilder.from(this.buttonRight.toJSON()).setDisabled(isOnLastPage),
-      ButtonBuilder.from(this.buttonMaxRight.toJSON()).setDisabled(isOnLastPage),
+      ButtonBuilder.from(this.buttonRight.toJSON())
+        .setCustomId(getCustomPaginationButtonId(PaginationButtonAction.RIGHT))
+        .setDisabled(isOnLastPage),
+      ButtonBuilder.from(this.buttonMaxRight.toJSON())
+        .setCustomId(getCustomPaginationButtonId(PaginationButtonAction.MAX_RIGHT))
+        .setDisabled(isOnLastPage),
     )
 
     return buttonsRow
