@@ -7,6 +7,7 @@ import {
 } from "discord.js"
 import type { OsuCommand } from "../../commands/osu.command"
 import type { Subcommand } from "@sapphire/plugin-subcommands"
+import { ExtendedError } from "../../lib/extended-error"
 
 export function addScoreSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
@@ -35,9 +36,7 @@ export async function chatInputRunScoreSubcommand(
   const { embedPresets } = this.container.utilities
 
   if (scoreId == -1) {
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed(`❓ Bad score id/link is provided`)],
-    })
+    throw new ExtendedError(`❓ Bad score id/link is provided`)
   }
 
   const scoreResponse = await getScoreById({
@@ -47,9 +46,7 @@ export async function chatInputRunScoreSubcommand(
   })
 
   if (scoreResponse.error) {
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed(`❓ I couldn't find score with such data`)],
-    })
+    throw new ExtendedError(`❓ I couldn't find score with such data`)
   }
 
   const score = scoreResponse.data
@@ -64,9 +61,7 @@ export async function chatInputRunScoreSubcommand(
     this.container.client.logger.error(
       `ScoreSubcommand: Couldn't fetch score's (id: ${score.id}) beatmap (id: ${score.beatmap_id}).`,
     )
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed(`❓ I couldn't fetch score's beatmap data`)],
-    })
+    throw new ExtendedError(`❓ I couldn't fetch score's beatmap data`)
   }
 
   const scoreEmbed = await embedPresets.getScoreEmbed(score, beatmap.data)

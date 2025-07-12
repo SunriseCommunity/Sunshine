@@ -2,6 +2,7 @@ import { getUserSearch } from "../../lib/types/api"
 import { bold, type SlashCommandSubcommandBuilder } from "discord.js"
 import type { OsuCommand } from "../../commands/osu.command"
 import type { Subcommand } from "@sapphire/plugin-subcommands"
+import { ExtendedError } from "../../lib/extended-error"
 
 export function addLinkSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
@@ -25,10 +26,9 @@ export async function chatInputRunLinkSubcommand(
   })
 
   if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
-    await interaction.editReply(
+    throw new ExtendedError(
       userSearchResponse.error ? userSearchResponse.error.error : "Couldn't fetch user!",
     )
-    return
   }
 
   const user = userSearchResponse.data[0]!

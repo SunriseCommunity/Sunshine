@@ -2,6 +2,7 @@ import { GameMode, getUserByIdByMode, getUserSearch } from "../../lib/types/api"
 import type { SlashCommandSubcommandBuilder } from "discord.js"
 import type { OsuCommand } from "../../commands/osu.command"
 import type { Subcommand } from "@sapphire/plugin-subcommands"
+import { ExtendedError } from "../../lib/extended-error"
 
 export function addProfileSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
@@ -47,15 +48,11 @@ export async function chatInputRunProfileSubcommand(
     })
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(
-            userSearchResponse.error
-              ? userSearchResponse.error.error
-              : "❓ I couldn't find user with such username",
-          ),
-        ],
-      })
+      throw new ExtendedError(
+        userSearchResponse.error
+          ? userSearchResponse.error.error
+          : "❓ I couldn't find user with such username",
+      )
     }
 
     userIdOption = userSearchResponse.data[0]?.user_id ?? null
@@ -75,11 +72,7 @@ export async function chatInputRunProfileSubcommand(
     }) as null | { osu_user_id: number }
 
     if (!row || !row.osu_user_id) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(`❓ Provided user didn't link their osu!sunrise account`),
-        ],
-      })
+      throw new ExtendedError(`❓ Provided user didn't link their osu!sunrise account`)
     }
 
     userResponse = await getUserByIdByMode({
@@ -88,13 +81,9 @@ export async function chatInputRunProfileSubcommand(
   }
 
   if (!userResponse || userResponse.error) {
-    return await interaction.editReply({
-      embeds: [
-        embedPresets.getErrorEmbed(
-          userResponse?.error ? userResponse.error.error : "Couldn't fetch requested user!",
-        ),
-      ],
-    })
+    throw new ExtendedError(
+      userResponse?.error ? userResponse.error.error : "Couldn't fetch requested user!",
+    )
   }
 
   const { user, stats } = userResponse.data

@@ -9,11 +9,13 @@ import { ExtendedError } from "../../lib/extended-error"
 export class InteractionHandlerErrorEvent extends Listener<typeof Events.InteractionHandlerError> {
   public override async run(error: Error, { interaction, handler }: InteractionHandlerError) {
     if (isAnyInteractableInteraction(interaction)) {
+      const { embedPresets } = this.container.utilities
+
       if (error instanceof ExtendedError) {
-        interactionError(interaction, error.message)
+        interactionError(embedPresets, interaction, error.message)
         return
       } else {
-        interactionError(interaction, "Ooops! Something went wrong... Sorry!")
+        interactionError(embedPresets, interaction, "Something went wrong... Sorry!")
         this.container.logger.error(handler.name, error)
       }
     }

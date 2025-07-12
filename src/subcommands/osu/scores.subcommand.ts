@@ -18,6 +18,7 @@ import type { Subcommand } from "@sapphire/plugin-subcommands"
 import { getBeatmapStarRating } from "../../lib/utils/osu/star-rating.util"
 import { getScoreRankEmoji } from "../../lib/utils/osu/emoji.util"
 import { getAverageColor } from "fast-average-color-node"
+import { ExtendedError } from "../../lib/extended-error"
 
 export function addScoresSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
@@ -76,15 +77,11 @@ export async function chatInputRunScoresSubcommand(
     })
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(
-            userSearchResponse.error
-              ? userSearchResponse.error.error
-              : "❓ I couldn't find user with such username",
-          ),
-        ],
-      })
+      throw new ExtendedError(
+        userSearchResponse.error
+          ? userSearchResponse.error.error
+          : "❓ I couldn't find user with such username",
+      )
     }
 
     userId = userSearchResponse.data[0]!.user_id
@@ -98,11 +95,7 @@ export async function chatInputRunScoresSubcommand(
     }) as null | { osu_user_id: number }
 
     if (!row || !row.osu_user_id) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(`❓ Provided user didn't link their osu!sunrise account`),
-        ],
-      })
+      throw new ExtendedError(`❓ Provided user didn't link their osu!sunrise account`)
     }
 
     userId = row.osu_user_id
@@ -111,9 +104,7 @@ export async function chatInputRunScoresSubcommand(
   const { pagination } = this.container.utilities
 
   if (userId === null) {
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed(`❓ Couldn't fetch requested user`)],
-    })
+    throw new ExtendedError(`❓ Couldn't fetch requested user`)
   }
 
   const handlePagination = createHandleForScoresPagination.call(

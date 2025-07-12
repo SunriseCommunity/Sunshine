@@ -14,6 +14,7 @@ import {
 } from "discord.js"
 import type { OsuCommand } from "../../commands/osu.command"
 import type { Subcommand } from "@sapphire/plugin-subcommands"
+import { ExtendedError } from "../../lib/extended-error"
 
 export function addRecentScoreSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
@@ -60,15 +61,11 @@ export async function chatInputRunRecentScoreSubcommand(
     })
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(
-            userSearchResponse.error
-              ? userSearchResponse.error.error
-              : "❓ I couldn't find user with such username",
-          ),
-        ],
-      })
+      throw new ExtendedError(
+        userSearchResponse.error
+          ? userSearchResponse.error.error
+          : "❓ I couldn't find user with such username",
+      )
     }
 
     recentScoreResponse = await getUserByIdScores({
@@ -92,11 +89,7 @@ export async function chatInputRunRecentScoreSubcommand(
     }) as null | { osu_user_id: number }
 
     if (!row || !row.osu_user_id) {
-      return await interaction.editReply({
-        embeds: [
-          embedPresets.getErrorEmbed(`❓ Provided user didn't link their osu!sunrise account`),
-        ],
-      })
+      throw new ExtendedError(`❓ Provided user didn't link their osu!sunrise account`)
     }
 
     recentScoreResponse = await getUserByIdScores({
@@ -113,21 +106,15 @@ export async function chatInputRunRecentScoreSubcommand(
   }
 
   if (!recentScoreResponse || recentScoreResponse.error) {
-    return await interaction.editReply({
-      embeds: [
-        embedPresets.getErrorEmbed(
-          recentScoreResponse?.error
-            ? recentScoreResponse.error.error
-            : "Couldn't fetch requested user's recent score!",
-        ),
-      ],
-    })
+    throw new ExtendedError(
+      recentScoreResponse?.error
+        ? recentScoreResponse.error.error
+        : "Couldn't fetch requested user's recent score!",
+    )
   }
 
   if (recentScoreResponse.data.scores.length <= 0) {
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed("This user has no recent scores")],
-    })
+    throw new ExtendedError("This user has no recent scores")
   }
 
   const score = recentScoreResponse.data.scores[0]!
@@ -142,9 +129,7 @@ export async function chatInputRunRecentScoreSubcommand(
     this.container.client.logger.error(
       `RecentScoreSubcommand: Couldn't fetch score's (id: ${score.id}) beatmap (id: ${score.beatmap_id}).`,
     )
-    return await interaction.editReply({
-      embeds: [embedPresets.getErrorEmbed(`❓ I couldn't fetch score's beatmap data`)],
-    })
+    throw new ExtendedError(`❓ I couldn't fetch score's beatmap data`)
   }
 
   const scoreEmbed = await embedPresets.getScoreEmbed(score, beatmap.data)

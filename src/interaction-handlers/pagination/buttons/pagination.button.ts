@@ -44,8 +44,6 @@ export class PaginationButton extends InteractionHandler {
     interaction: ButtonInteraction,
     { dataStoreId, handleSetPage, state, paginationAction }: InteractionHandler.ParseResult<this>,
   ) {
-    console.log(paginationAction)
-
     switch (paginationAction) {
       case PaginationButtonAction.MAX_LEFT:
         state.currentPage = 1

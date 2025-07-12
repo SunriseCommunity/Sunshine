@@ -1,12 +1,14 @@
 import type { AnyInteraction } from "@sapphire/discord.js-utilities"
 import { AutocompleteInteraction, Colors, EmbedBuilder } from "discord.js"
+import type { EmbedPresetsUtility } from "../../utilities/embed-presets.utility"
 
 export function interactionError(
+  embedPresets: EmbedPresetsUtility,
   interaction: Exclude<AnyInteraction, AutocompleteInteraction>,
   message: string,
 ) {
   const payload = {
-    embeds: [new EmbedBuilder().setColor(Colors.Red).setDescription(message)],
+    embeds: [embedPresets.getErrorEmbed("Uh-oh!", message)],
     ephemeral: true,
   }
 
