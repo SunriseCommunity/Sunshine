@@ -176,7 +176,7 @@ export class FakerGenerator {
   static generateUser(options?: DeepPartial<User>): User {
     return {
       id: faker.string.uuid(),
-      username: faker.internet.userName(),
+      username: faker.internet.username(),
       discriminator: faker.string.numeric(4),
       bot: faker.datatype.boolean(),
       system: false,
@@ -189,12 +189,12 @@ export class FakerGenerator {
       flags: null,
       createdAt: faker.date.past(),
       createdTimestamp: Date.now(),
-      displayName: faker.internet.userName(),
+      displayName: faker.internet.username(),
       defaultAvatarURL: faker.internet.url(),
       dmChannel: null,
       hexAccentColor: null,
       partial: false,
-      tag: `${faker.internet.userName()}#${faker.string.numeric(4)}`,
+      tag: `${faker.internet.username()}#${faker.string.numeric(4)}`,
       avatarURL: mock(() => faker.internet.url()),
       avatarDecorationURL: mock(() => null),
       bannerURL: mock(() => null),
