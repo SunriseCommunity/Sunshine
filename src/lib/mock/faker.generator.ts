@@ -3,11 +3,13 @@ import { jest, mock } from "bun:test"
 import {
   ApplicationCommand,
   ApplicationCommandType,
+  ButtonInteraction,
   Client,
   DMChannel,
   InteractionType,
   Locale,
   Message,
+  ModalSubmitInteraction,
   PermissionsBitField,
   User,
   UserFlagsBitField,
@@ -17,6 +19,7 @@ import {
 import { faker } from "@faker-js/faker"
 import { Command, CommandStore, container } from "@sapphire/framework"
 import type { DeepPartial } from "@sapphire/utilities"
+import { buildCustomId } from "../utils/discord.util"
 
 export class FakerGenerator {
   static generatePiece() {
@@ -28,13 +31,33 @@ export class FakerGenerator {
     }
   }
 
-  static generateLoaderContext(): Command.LoaderContext {
+  static generateLoaderContext() {
     return {
       name: faker.string.alpha(10),
       store: new CommandStore(),
       path: faker.system.filePath(),
       root: faker.system.directoryPath(),
     }
+  }
+
+  static generateCustomId(
+    options?: Partial<{
+      prefix: string
+      userId: string
+      ctx: {
+        dataStoreId?: string | undefined
+        data?: string[] | undefined
+      }
+    }>,
+  ) {
+    return buildCustomId(
+      options?.prefix ?? faker.lorem.word({ length: { min: 0, max: 10 } }),
+      options?.userId ?? faker.number.int().toString(),
+      {
+        data: options?.ctx?.data ?? undefined,
+        dataStoreId: options?.ctx?.dataStoreId ?? undefined,
+      },
+    )
   }
 
   static generateInteraction(
@@ -70,6 +93,52 @@ export class FakerGenerator {
       options: {},
       ...options,
     } as unknown as Command.ChatInputCommandInteraction
+  }
+
+  static generateModalSubmitInteraction(
+    options?: DeepPartial<ModalSubmitInteraction>,
+  ): ModalSubmitInteraction {
+    return {
+      id: faker.string.uuid(),
+      applicationId: faker.string.uuid(),
+      channelId: faker.string.uuid(),
+      user: FakerGenerator.generateUser(),
+      guildId: faker.string.uuid(),
+      type: InteractionType.ModalSubmit,
+      customId: faker.lorem.slug(),
+      channel: null,
+      createdAt: faker.date.past(),
+      createdTimestamp: Date.now(),
+      guild: null,
+      member: null,
+      token: "",
+      version: 0,
+      memberPermissions: null,
+      locale: Locale.French,
+      guildLocale: null,
+      deferred: faker.datatype.boolean(),
+      ephemeral: faker.datatype.boolean(),
+      replied: faker.datatype.boolean(),
+      isFromMessage: false,
+      message: null,
+      fields: [],
+      isModalSubmit: () => true,
+      isButton: () => false,
+      isSelectMenu: () => false,
+      isAutocomplete: () => false,
+      isCommand: () => false,
+      isContextMenuCommand: () => false,
+      reply: mock(async () => null),
+      deferReply: mock(async () => null),
+      editReply: mock(async () => null),
+      fetchReply: mock(async () => null),
+      deleteReply: mock(async () => null),
+      followUp: mock(async () => null),
+      deferUpdate: mock(async () => null),
+      update: mock(async () => null),
+      showModal: mock(async () => null),
+      ...options,
+    } as unknown as ModalSubmitInteraction
   }
 
   static withSubcommand<T extends Command.ChatInputCommandInteraction>(
