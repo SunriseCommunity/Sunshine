@@ -37,6 +37,7 @@ export interface IConfig {
 const requiredEnvVariables = ["DISCORD_TOKEN", "SUNRISE_URI"]
 requiredEnvVariables.map((v) => {
   if (!process.env[v]) {
+    if (process.env.NODE_ENV === "test") return
     throw new Error(`${v} is not provided in environment file!`)
   }
 })
