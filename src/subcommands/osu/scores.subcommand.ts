@@ -78,9 +78,9 @@ export async function chatInputRunScoresSubcommand(
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
       throw new ExtendedError(
-        userSearchResponse.error
-          ? userSearchResponse.error.error
-          : "❓ I couldn't find user with such username",
+        userSearchResponse?.error?.detail ||
+          userSearchResponse?.error?.title ||
+          "❓ I couldn't find user with such username",
       )
     }
 
@@ -150,9 +150,9 @@ function createHandleForScoresPagination(
 
     if (!scoresResponse || scoresResponse.error) {
       return embedPresets.getErrorEmbed(
-        scoresResponse?.error
-          ? scoresResponse.error.error
-          : "Couldn't fetch requested user's scores!",
+        scoresResponse?.error?.detail ||
+          scoresResponse?.error?.title ||
+          "Couldn't fetch requested user's scores!",
       )
     }
 

@@ -49,9 +49,9 @@ export async function chatInputRunProfileSubcommand(
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
       throw new ExtendedError(
-        userSearchResponse.error
-          ? userSearchResponse.error.error
-          : "❓ I couldn't find user with such username",
+        userSearchResponse?.error?.detail ||
+          userSearchResponse?.error?.title ||
+          "❓ I couldn't find user with such username",
       )
     }
 
@@ -82,7 +82,7 @@ export async function chatInputRunProfileSubcommand(
 
   if (!userResponse || userResponse.error) {
     throw new ExtendedError(
-      userResponse?.error ? userResponse.error.error : "Couldn't fetch requested user!",
+      userResponse?.error?.detail || userResponse?.error?.title || "Couldn't fetch requested user!",
     )
   }
 

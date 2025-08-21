@@ -27,7 +27,9 @@ export async function chatInputRunLinkSubcommand(
 
   if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
     throw new ExtendedError(
-      userSearchResponse.error ? userSearchResponse.error.error : "Couldn't fetch user!",
+      userSearchResponse?.error?.detail ||
+        userSearchResponse?.error?.title ||
+        "Couldn't fetch user!",
     )
   }
 

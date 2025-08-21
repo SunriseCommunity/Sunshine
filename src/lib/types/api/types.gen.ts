@@ -108,6 +108,230 @@ export type ChangePasswordRequest = {
     new_password: string;
 };
 
+export type CountryChangeRequest = {
+    new_country: CountryCode;
+};
+
+export enum CountryCode {
+    XX = 'XX',
+    AD = 'AD',
+    AF = 'AF',
+    AI = 'AI',
+    AL = 'AL',
+    AM = 'AM',
+    AO = 'AO',
+    AQ = 'AQ',
+    AR = 'AR',
+    AS = 'AS',
+    AT = 'AT',
+    AU = 'AU',
+    AW = 'AW',
+    AZ = 'AZ',
+    BB = 'BB',
+    BD = 'BD',
+    BE = 'BE',
+    BF = 'BF',
+    BG = 'BG',
+    BH = 'BH',
+    BI = 'BI',
+    BJ = 'BJ',
+    BM = 'BM',
+    BO = 'BO',
+    BR = 'BR',
+    BS = 'BS',
+    BT = 'BT',
+    BV = 'BV',
+    BW = 'BW',
+    BY = 'BY',
+    BZ = 'BZ',
+    CA = 'CA',
+    CC = 'CC',
+    CF = 'CF',
+    CH = 'CH',
+    CK = 'CK',
+    CL = 'CL',
+    CM = 'CM',
+    CN = 'CN',
+    CO = 'CO',
+    CR = 'CR',
+    CU = 'CU',
+    CV = 'CV',
+    CX = 'CX',
+    CY = 'CY',
+    CZ = 'CZ',
+    DE = 'DE',
+    DJ = 'DJ',
+    DK = 'DK',
+    DM = 'DM',
+    DO = 'DO',
+    DZ = 'DZ',
+    EC = 'EC',
+    EE = 'EE',
+    EG = 'EG',
+    EH = 'EH',
+    ER = 'ER',
+    ES = 'ES',
+    ET = 'ET',
+    FI = 'FI',
+    FJ = 'FJ',
+    FK = 'FK',
+    FO = 'FO',
+    FR = 'FR',
+    GA = 'GA',
+    GB = 'GB',
+    GD = 'GD',
+    GE = 'GE',
+    GF = 'GF',
+    GH = 'GH',
+    GI = 'GI',
+    GL = 'GL',
+    GM = 'GM',
+    GN = 'GN',
+    GP = 'GP',
+    GQ = 'GQ',
+    GR = 'GR',
+    GT = 'GT',
+    GU = 'GU',
+    GW = 'GW',
+    GY = 'GY',
+    HK = 'HK',
+    HN = 'HN',
+    HR = 'HR',
+    HT = 'HT',
+    HU = 'HU',
+    ID = 'ID',
+    IE = 'IE',
+    IL = 'IL',
+    IN = 'IN',
+    IO = 'IO',
+    IQ = 'IQ',
+    IS = 'IS',
+    IT = 'IT',
+    JM = 'JM',
+    JO = 'JO',
+    JP = 'JP',
+    KE = 'KE',
+    KG = 'KG',
+    KH = 'KH',
+    KI = 'KI',
+    KM = 'KM',
+    KR = 'KR',
+    KW = 'KW',
+    KY = 'KY',
+    KZ = 'KZ',
+    LB = 'LB',
+    LI = 'LI',
+    LK = 'LK',
+    LR = 'LR',
+    LS = 'LS',
+    LT = 'LT',
+    LU = 'LU',
+    LV = 'LV',
+    MA = 'MA',
+    MC = 'MC',
+    MG = 'MG',
+    MH = 'MH',
+    ML = 'ML',
+    MM = 'MM',
+    MN = 'MN',
+    MP = 'MP',
+    MQ = 'MQ',
+    MR = 'MR',
+    MS = 'MS',
+    MT = 'MT',
+    MU = 'MU',
+    MV = 'MV',
+    MW = 'MW',
+    MX = 'MX',
+    MY = 'MY',
+    MZ = 'MZ',
+    NA = 'NA',
+    NC = 'NC',
+    NE = 'NE',
+    NF = 'NF',
+    NG = 'NG',
+    NI = 'NI',
+    NL = 'NL',
+    NO = 'NO',
+    NP = 'NP',
+    NR = 'NR',
+    NU = 'NU',
+    NZ = 'NZ',
+    OM = 'OM',
+    PA = 'PA',
+    PE = 'PE',
+    PF = 'PF',
+    PG = 'PG',
+    PH = 'PH',
+    PK = 'PK',
+    PL = 'PL',
+    PN = 'PN',
+    PR = 'PR',
+    PS = 'PS',
+    PT = 'PT',
+    PW = 'PW',
+    PY = 'PY',
+    QA = 'QA',
+    RE = 'RE',
+    RO = 'RO',
+    RU = 'RU',
+    RW = 'RW',
+    SA = 'SA',
+    SB = 'SB',
+    SC = 'SC',
+    SD = 'SD',
+    SE = 'SE',
+    SG = 'SG',
+    SI = 'SI',
+    SJ = 'SJ',
+    SK = 'SK',
+    SL = 'SL',
+    SM = 'SM',
+    SN = 'SN',
+    SO = 'SO',
+    SR = 'SR',
+    ST = 'ST',
+    SV = 'SV',
+    SZ = 'SZ',
+    TC = 'TC',
+    TD = 'TD',
+    TF = 'TF',
+    TG = 'TG',
+    TH = 'TH',
+    TJ = 'TJ',
+    TK = 'TK',
+    TM = 'TM',
+    TN = 'TN',
+    TO = 'TO',
+    TR = 'TR',
+    TT = 'TT',
+    TV = 'TV',
+    TW = 'TW',
+    TZ = 'TZ',
+    UA = 'UA',
+    UG = 'UG',
+    US = 'US',
+    UY = 'UY',
+    UZ = 'UZ',
+    VE = 'VE',
+    VN = 'VN',
+    VU = 'VU',
+    WF = 'WF',
+    WS = 'WS',
+    YE = 'YE',
+    YT = 'YT',
+    RS = 'RS',
+    ZA = 'ZA',
+    ZM = 'ZM',
+    ME = 'ME',
+    ZW = 'ZW',
+    AX = 'AX',
+    GG = 'GG',
+    IM = 'IM',
+    JE = 'JE',
+    MF = 'MF'
+}
+
 export type CustomBeatmapStatusChangeResponse = {
     beatmap: BeatmapResponse;
     new_status: BeatmapStatusWeb;
@@ -174,10 +398,6 @@ export type EditUserMetadataRequest = {
     twitter?: string | null;
     discord?: string | null;
     website?: string | null;
-};
-
-export type ErrorResponse = {
-    error: string;
 };
 
 export type FavouritedResponse = {
@@ -372,6 +592,16 @@ export type PerformanceAttributes = {
     state: ScoreState;
 };
 
+export type ProblemDetailsResponseType = {
+    type?: string | null;
+    title?: string | null;
+    status?: number | null;
+    detail?: string | null;
+    instance?: string | null;
+    traceId?: string | null;
+    errors?: unknown;
+};
+
 export type RateLimits = {
     total_limit: number;
     remaining_calls: number;
@@ -531,7 +761,7 @@ export type UserResponse = {
     user_id: number;
     username: string;
     description?: string | null;
-    country_code: string;
+    country_code: CountryCode;
     register_date: string;
     avatar_url: string;
     banner_url: string;
@@ -597,7 +827,7 @@ export type PostAuthTokenErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type PostAuthTokenError = PostAuthTokenErrors[keyof PostAuthTokenErrors];
@@ -622,7 +852,7 @@ export type PostAuthRefreshErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type PostAuthRefreshError = PostAuthRefreshErrors[keyof PostAuthRefreshErrors];
@@ -647,7 +877,7 @@ export type PostAuthRegisterErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type PostAuthRegisterError = PostAuthRegisterErrors[keyof PostAuthRegisterErrors];
@@ -672,7 +902,7 @@ export type GetPingErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetPingError = GetPingErrors[keyof GetPingErrors];
@@ -697,7 +927,7 @@ export type GetLimitsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetLimitsError = GetLimitsErrors[keyof GetLimitsErrors];
@@ -725,7 +955,7 @@ export type GetStatusErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetStatusError = GetStatusErrors[keyof GetStatusErrors];
@@ -752,11 +982,11 @@ export type GetBeatmapByIdErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapByIdError = GetBeatmapByIdErrors[keyof GetBeatmapByIdErrors];
@@ -784,11 +1014,11 @@ export type GetBeatmapsetByBeatmapSetByIdErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByBeatmapSetByIdError = GetBeatmapsetByBeatmapSetByIdErrors[keyof GetBeatmapsetByBeatmapSetByIdErrors];
@@ -821,11 +1051,11 @@ export type GetBeatmapByIdPpErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapByIdPpError = GetBeatmapByIdPpErrors[keyof GetBeatmapByIdPpErrors];
@@ -859,11 +1089,11 @@ export type GetBeatmapsetByBeatmapSetByIdPpErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByBeatmapSetByIdPpError = GetBeatmapsetByBeatmapSetByIdPpErrors[keyof GetBeatmapsetByBeatmapSetByIdPpErrors];
@@ -882,8 +1112,8 @@ export type GetBeatmapByIdLeaderboardData = {
     path: {
         id: number;
     };
-    query?: {
-        mode?: GameMode;
+    query: {
+        mode: GameMode;
         mods?: Array<Mods>;
         limit?: number;
     };
@@ -894,11 +1124,11 @@ export type GetBeatmapByIdLeaderboardErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapByIdLeaderboardError = GetBeatmapByIdLeaderboardErrors[keyof GetBeatmapByIdLeaderboardErrors];
@@ -918,8 +1148,8 @@ export type GetBeatmapsetByBeatmapSetByIdLeaderboardData = {
         id: number;
         beatmapSet: string;
     };
-    query?: {
-        mode?: GameMode;
+    query: {
+        mode: GameMode;
         mods?: Array<Mods>;
         limit?: number;
     };
@@ -930,11 +1160,11 @@ export type GetBeatmapsetByBeatmapSetByIdLeaderboardErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByBeatmapSetByIdLeaderboardError = GetBeatmapsetByBeatmapSetByIdLeaderboardErrors[keyof GetBeatmapsetByBeatmapSetByIdLeaderboardErrors];
@@ -961,11 +1191,11 @@ export type GetBeatmapsetByIdErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByIdError = GetBeatmapsetByIdErrors[keyof GetBeatmapsetByIdErrors];
@@ -992,11 +1222,11 @@ export type GetBeatmapsetByIdHypeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByIdHypeError = GetBeatmapsetByIdHypeErrors[keyof GetBeatmapsetByIdHypeErrors];
@@ -1023,15 +1253,15 @@ export type PostBeatmapsetByIdHypeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type PostBeatmapsetByIdHypeError = PostBeatmapsetByIdHypeErrors[keyof PostBeatmapsetByIdHypeErrors];
@@ -1057,15 +1287,15 @@ export type GetBeatmapsetGetHypedSetsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetGetHypedSetsError = GetBeatmapsetGetHypedSetsErrors[keyof GetBeatmapsetGetHypedSetsErrors];
@@ -1095,15 +1325,15 @@ export type GetBeatmapsetByIdEventsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByIdEventsError = GetBeatmapsetByIdEventsErrors[keyof GetBeatmapsetByIdEventsErrors];
@@ -1131,15 +1361,15 @@ export type GetBeatmapsetEventsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetEventsError = GetBeatmapsetEventsErrors[keyof GetBeatmapsetEventsErrors];
@@ -1166,11 +1396,11 @@ export type GetBeatmapsetByIdFavouritedErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetByIdFavouritedError = GetBeatmapsetByIdFavouritedErrors[keyof GetBeatmapsetByIdFavouritedErrors];
@@ -1197,15 +1427,15 @@ export type PostBeatmapsetByIdFavouritedErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type PostBeatmapsetByIdFavouritedError = PostBeatmapsetByIdFavouritedErrors[keyof PostBeatmapsetByIdFavouritedErrors];
@@ -1228,15 +1458,15 @@ export type PostBeatmapUpdateCustomStatusErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type PostBeatmapUpdateCustomStatusError = PostBeatmapUpdateCustomStatusErrors[keyof PostBeatmapUpdateCustomStatusErrors];
@@ -1265,11 +1495,11 @@ export type GetBeatmapsetSearchErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetBeatmapsetSearchError = GetBeatmapsetSearchErrors[keyof GetBeatmapsetSearchErrors];
@@ -1296,11 +1526,11 @@ export type GetScoreByIdErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetScoreByIdError = GetScoreByIdErrors[keyof GetScoreByIdErrors];
@@ -1327,15 +1557,15 @@ export type GetScoreByIdReplayErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetScoreByIdReplayError = GetScoreByIdReplayErrors[keyof GetScoreByIdReplayErrors];
@@ -1364,7 +1594,7 @@ export type GetScoreTopErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetScoreTopError = GetScoreTopErrors[keyof GetScoreTopErrors];
@@ -1391,11 +1621,11 @@ export type GetUserByIdErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdError = GetUserByIdErrors[keyof GetUserByIdErrors];
@@ -1423,11 +1653,11 @@ export type GetUserByIdByModeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdByModeError = GetUserByIdByModeErrors[keyof GetUserByIdByModeErrors];
@@ -1452,11 +1682,11 @@ export type GetUserSelfErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type GetUserSelfError = GetUserSelfErrors[keyof GetUserSelfErrors];
@@ -1483,11 +1713,11 @@ export type GetUserSelfByModeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type GetUserSelfByModeError = GetUserSelfByModeErrors[keyof GetUserSelfByModeErrors];
@@ -1512,11 +1742,11 @@ export type PostUserEditDescriptionErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserEditDescriptionError = PostUserEditDescriptionErrors[keyof PostUserEditDescriptionErrors];
@@ -1539,11 +1769,11 @@ export type PostUserEditDefaultGamemodeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserEditDefaultGamemodeError = PostUserEditDefaultGamemodeErrors[keyof PostUserEditDefaultGamemodeErrors];
@@ -1560,8 +1790,8 @@ export type GetUserByUserIdGraphData = {
     path: {
         userId: number;
     };
-    query?: {
-        mode?: GameMode;
+    query: {
+        mode: GameMode;
     };
     url: '/user/{userId}/graph';
 };
@@ -1570,11 +1800,11 @@ export type GetUserByUserIdGraphErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByUserIdGraphError = GetUserByUserIdGraphErrors[keyof GetUserByUserIdGraphErrors];
@@ -1606,11 +1836,11 @@ export type GetUserByIdScoresErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdScoresError = GetUserByIdScoresErrors[keyof GetUserByIdScoresErrors];
@@ -1641,11 +1871,11 @@ export type GetUserByIdMostplayedErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdMostplayedError = GetUserByIdMostplayedErrors[keyof GetUserByIdMostplayedErrors];
@@ -1675,11 +1905,11 @@ export type GetUserByIdFavouritesErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdFavouritesError = GetUserByIdFavouritesErrors[keyof GetUserByIdFavouritesErrors];
@@ -1709,11 +1939,11 @@ export type GetUserLeaderboardErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserLeaderboardError = GetUserLeaderboardErrors[keyof GetUserLeaderboardErrors];
@@ -1730,8 +1960,8 @@ export type GetUserLeaderboardResponse = GetUserLeaderboardResponses[keyof GetUs
 export type GetUserSearchData = {
     body?: never;
     path?: never;
-    query?: {
-        query?: string;
+    query: {
+        query: string;
         limit?: number;
         page?: number;
     };
@@ -1742,7 +1972,7 @@ export type GetUserSearchErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetUserSearchError = GetUserSearchErrors[keyof GetUserSearchErrors];
@@ -1770,11 +2000,11 @@ export type GetUserFriendsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type GetUserFriendsError = GetUserFriendsErrors[keyof GetUserFriendsErrors];
@@ -1802,11 +2032,11 @@ export type GetUserFollowersErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type GetUserFollowersError = GetUserFollowersErrors[keyof GetUserFollowersErrors];
@@ -1833,15 +2063,15 @@ export type GetUserByIdFriendStatusErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdFriendStatusError = GetUserByIdFriendStatusErrors[keyof GetUserByIdFriendStatusErrors];
@@ -1868,15 +2098,15 @@ export type PostUserByIdFriendStatusErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type PostUserByIdFriendStatusError = PostUserByIdFriendStatusErrors[keyof PostUserByIdFriendStatusErrors];
@@ -1891,8 +2121,8 @@ export type PostUserByIdFriendStatusResponses = {
 export type GetUserInventoryItemData = {
     body?: never;
     path?: never;
-    query?: {
-        type?: ItemType;
+    query: {
+        type: ItemType;
     };
     url: '/user/inventory/item';
 };
@@ -1901,15 +2131,15 @@ export type GetUserInventoryItemErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserInventoryItemError = GetUserInventoryItemErrors[keyof GetUserInventoryItemErrors];
@@ -1936,11 +2166,11 @@ export type GetUserByIdFriendsCountErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdFriendsCountError = GetUserByIdFriendsCountErrors[keyof GetUserByIdFriendsCountErrors];
@@ -1959,8 +2189,8 @@ export type GetUserByIdMedalsData = {
     path: {
         id: number;
     };
-    query?: {
-        mode?: GameMode;
+    query: {
+        mode: GameMode;
     };
     url: '/user/{id}/medals';
 };
@@ -1969,7 +2199,7 @@ export type GetUserByIdMedalsErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdMedalsError = GetUserByIdMedalsErrors[keyof GetUserByIdMedalsErrors];
@@ -1988,8 +2218,8 @@ export type GetUserByIdGradesData = {
     path: {
         id: number;
     };
-    query?: {
-        mode?: GameMode;
+    query: {
+        mode: GameMode;
     };
     url: '/user/{id}/grades';
 };
@@ -1998,11 +2228,11 @@ export type GetUserByIdGradesErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdGradesError = GetUserByIdGradesErrors[keyof GetUserByIdGradesErrors];
@@ -2029,11 +2259,11 @@ export type GetUserByIdMetadataErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type GetUserByIdMetadataError = GetUserByIdMetadataErrors[keyof GetUserByIdMetadataErrors];
@@ -2058,11 +2288,11 @@ export type PostUserEditMetadataErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Not Found
      */
-    404: ErrorResponse;
+    404: ProblemDetailsResponseType;
 };
 
 export type PostUserEditMetadataError = PostUserEditMetadataErrors[keyof PostUserEditMetadataErrors];
@@ -2085,11 +2315,11 @@ export type PostUserUploadAvatarErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserUploadAvatarError = PostUserUploadAvatarErrors[keyof PostUserUploadAvatarErrors];
@@ -2112,11 +2342,11 @@ export type PostUserUploadBannerErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserUploadBannerError = PostUserUploadBannerErrors[keyof PostUserUploadBannerErrors];
@@ -2139,11 +2369,11 @@ export type PostUserPasswordChangeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserPasswordChangeError = PostUserPasswordChangeErrors[keyof PostUserPasswordChangeErrors];
@@ -2166,16 +2396,43 @@ export type PostUserUsernameChangeErrors = {
     /**
      * Bad Request
      */
-    400: ErrorResponse;
+    400: ProblemDetailsResponseType;
     /**
      * Unauthorized
      */
-    401: ErrorResponse;
+    401: ProblemDetailsResponseType;
 };
 
 export type PostUserUsernameChangeError = PostUserUsernameChangeErrors[keyof PostUserUsernameChangeErrors];
 
 export type PostUserUsernameChangeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostUserCountryChangeData = {
+    body?: CountryChangeRequest;
+    path?: never;
+    query?: never;
+    url: '/user/country/change';
+};
+
+export type PostUserCountryChangeErrors = {
+    /**
+     * Bad Request
+     */
+    400: ProblemDetailsResponseType;
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetailsResponseType;
+};
+
+export type PostUserCountryChangeError = PostUserCountryChangeErrors[keyof PostUserCountryChangeErrors];
+
+export type PostUserCountryChangeResponses = {
     /**
      * OK
      */

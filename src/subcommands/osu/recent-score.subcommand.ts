@@ -62,9 +62,9 @@ export async function chatInputRunRecentScoreSubcommand(
 
     if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
       throw new ExtendedError(
-        userSearchResponse.error
-          ? userSearchResponse.error.error
-          : "❓ I couldn't find user with such username",
+        userSearchResponse?.error?.detail ||
+          userSearchResponse?.error?.title ||
+          "❓ I couldn't find user with such username",
       )
     }
 
@@ -107,9 +107,9 @@ export async function chatInputRunRecentScoreSubcommand(
 
   if (!recentScoreResponse || recentScoreResponse.error) {
     throw new ExtendedError(
-      recentScoreResponse?.error
-        ? recentScoreResponse.error.error
-        : "Couldn't fetch requested user's recent score!",
+      recentScoreResponse?.error?.detail ||
+        recentScoreResponse?.error?.title ||
+        "Couldn't fetch requested user's recent score!",
     )
   }
 
