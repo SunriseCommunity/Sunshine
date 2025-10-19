@@ -3,23 +3,50 @@ import { jest, mock } from "bun:test"
 import {
   ApplicationCommand,
   ApplicationCommandType,
-  ButtonInteraction,
-  Client,
-  DMChannel,
   InteractionType,
   Locale,
-  Message,
   ModalSubmitInteraction,
   PermissionsBitField,
   User,
-  UserFlagsBitField,
-  type UserMention,
 } from "discord.js"
 
 import { faker } from "@faker-js/faker"
 import { Command, CommandStore, container } from "@sapphire/framework"
 import type { DeepPartial } from "@sapphire/utilities"
 import { buildCustomId } from "../utils/discord.util"
+
+function autoMock<T extends object>(base: Partial<T>): T {
+  return new Proxy(base as T, {
+    get(target: any, prop: string | symbol) {
+      if (prop in target) {
+        return target[prop]
+      }
+
+      return mock(async (...args: any[]) => null)
+    },
+  }) as unknown as T
+}
+
+const createBaseEntity = () => ({
+  id: faker.string.uuid(),
+  createdAt: faker.date.past(),
+  createdTimestamp: Date.now(),
+})
+
+const createBaseInteraction = () => ({
+  ...createBaseEntity(),
+  applicationId: faker.string.uuid(),
+  channelId: faker.string.uuid(),
+  guildId: faker.string.uuid(),
+  channel: null,
+  guild: null,
+  member: null,
+  token: "",
+  version: 0,
+  memberPermissions: null,
+  locale: Locale.French,
+  guildLocale: null,
+})
 
 export class FakerGenerator {
   static generatePiece() {
@@ -63,64 +90,38 @@ export class FakerGenerator {
   static generateInteraction(
     options?: DeepPartial<Command.ChatInputCommandInteraction>,
   ): Command.ChatInputCommandInteraction {
-    return {
-      id: faker.string.uuid(),
-      applicationId: faker.string.uuid(),
-      channelId: faker.string.uuid(),
-      user: FakerGenerator.generateUser(),
-      guildId: faker.string.uuid(),
+    return autoMock<Command.ChatInputCommandInteraction>({
+      ...createBaseInteraction(),
+      user: options?.user ?? FakerGenerator.generateUser(),
       commandType: ApplicationCommandType.ChatInput,
       type: InteractionType.ApplicationCommand,
-      command: FakerGenerator.generateCommand(),
+      command: options?.command ?? FakerGenerator.generateCommand(),
       commandId: faker.string.uuid(),
       commandName: faker.lorem.words(2),
       commandGuildId: faker.string.uuid(),
       deferred: faker.datatype.boolean(),
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
-      channel: null,
       context: null,
-      createdAt: faker.date.past(),
-      createdTimestamp: Date.now(),
-      guild: null,
-      member: null,
-      token: "",
-      version: 0,
-      memberPermissions: null,
-      locale: Locale.French,
-      guildLocale: null,
       attachmentSizeLimit: 0,
-      options: {},
-      ...options,
-    } as unknown as Command.ChatInputCommandInteraction
+      options: options?.options ?? {},
+      ...(options as any),
+    })
   }
 
   static generateModalSubmitInteraction(
     options?: DeepPartial<ModalSubmitInteraction>,
   ): ModalSubmitInteraction {
-    return {
-      id: faker.string.uuid(),
-      applicationId: faker.string.uuid(),
-      channelId: faker.string.uuid(),
-      user: FakerGenerator.generateUser(),
-      guildId: faker.string.uuid(),
+    return autoMock<ModalSubmitInteraction>({
+      ...createBaseInteraction(),
+      user: options?.user ?? FakerGenerator.generateUser(),
       type: InteractionType.ModalSubmit,
       customId: faker.lorem.slug(),
-      channel: null,
-      createdAt: faker.date.past(),
-      createdTimestamp: Date.now(),
-      guild: null,
-      member: null,
-      token: "",
-      version: 0,
-      memberPermissions: null,
-      locale: Locale.French,
-      guildLocale: null,
       deferred: faker.datatype.boolean(),
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
       isFromMessage: false,
-      message: null,
+      message: options?.message ?? null,
       fields: [],
       isModalSubmit: () => true,
       isButton: () => false,
@@ -128,17 +129,8 @@ export class FakerGenerator {
       isAutocomplete: () => false,
       isCommand: () => false,
       isContextMenuCommand: () => false,
-      reply: mock(async () => null),
-      deferReply: mock(async () => null),
-      editReply: mock(async () => null),
-      fetchReply: mock(async () => null),
-      deleteReply: mock(async () => null),
-      followUp: mock(async () => null),
-      deferUpdate: mock(async () => null),
-      update: mock(async () => null),
-      showModal: mock(async () => null),
-      ...options,
-    } as unknown as ModalSubmitInteraction
+      ...(options as any),
+    })
   }
 
   static withSubcommand<T extends Command.ChatInputCommandInteraction>(
@@ -152,68 +144,45 @@ export class FakerGenerator {
   }
 
   static generateCommand(options?: DeepPartial<ApplicationCommand<{}>>): ApplicationCommand<{}> {
-    return {
-      id: faker.string.uuid(),
+    return autoMock<ApplicationCommand<{}>>({
+      ...createBaseEntity(),
       applicationId: faker.string.uuid(),
       guildId: faker.string.uuid(),
       type: ApplicationCommandType.ChatInput,
-      createdAt: faker.date.past(),
-      createdTimestamp: Date.now(),
       guild: null,
       version: `v${faker.number.int({ min: 1, max: 100 })}`,
       contexts: [],
-      client: container.client as unknown as Client<true>,
+      client: container.client as any,
       defaultMemberPermissions: new PermissionsBitField(PermissionsBitField.Flags.SendMessages),
       description: faker.lorem.sentence(),
       options: [],
       descriptionLocalizations: {},
       descriptionLocalized: faker.lorem.sentence(),
       dmPermission: true,
-      ...options,
-    } as unknown as ApplicationCommand<{}>
+      ...(options as any),
+    })
   }
 
   static generateUser(options?: DeepPartial<User>): User {
-    return {
-      id: faker.string.uuid(),
-      username: faker.internet.username(),
+    const userId = options?.id ?? faker.string.uuid()
+    const username = options?.username ?? faker.internet.username()
+
+    return autoMock<User>({
+      ...createBaseEntity(),
+      id: userId,
+      username,
       discriminator: faker.string.numeric(4),
       bot: faker.datatype.boolean(),
       system: false,
-      accentColor: faker.datatype.boolean() ? faker.number.int({ min: 0, max: 0xffffff }) : null,
-      avatar: faker.datatype.boolean() ? faker.string.alphanumeric(32) : null,
-      avatarDecoration: null,
-      avatarDecorationData: null,
-      banner: null,
-      globalName: faker.datatype.boolean() ? faker.person.fullName() : null,
-      flags: null,
-      createdAt: faker.date.past(),
-      createdTimestamp: Date.now(),
-      displayName: faker.internet.username(),
+      displayName: username,
       defaultAvatarURL: faker.internet.url(),
-      dmChannel: null,
-      hexAccentColor: null,
       partial: false,
-      tag: `${faker.internet.username()}#${faker.string.numeric(4)}`,
-      avatarURL: mock(() => faker.internet.url()),
-      avatarDecorationURL: mock(() => null),
-      bannerURL: mock(() => null),
-      displayAvatarURL: mock(() => faker.internet.url()),
-      equals: mock(() => false),
-      createDM: mock(async () => null) as unknown as (
-        force?: boolean | undefined,
-      ) => Promise<DMChannel>,
-      deleteDM: mock(async () => null) as unknown as () => Promise<DMChannel>,
-      fetch: mock(async () => null) as unknown as (force?: boolean | undefined) => Promise<User>,
-      fetchFlags: mock(async () => null) as unknown as () => Promise<UserFlagsBitField>,
-      toString: mock(() => `<@${faker.string.uuid()}>`) as unknown as () => UserMention,
-      toJSON: mock(() => ({})) as unknown as () => Record<string, unknown>,
-      client: container.client as unknown as Client<true>,
-      send: mock(async () => null) as unknown as (
-        content: string,
-        options?: any,
-      ) => Promise<Message<false>>,
-      ...options,
-    } as unknown as User
+      tag: `${username}#${faker.string.numeric(4)}`,
+      client: container.client as any,
+      avatarURL: () => faker.internet.url(),
+      displayAvatarURL: () => faker.internet.url(),
+      toString: () => `<@${userId}>`,
+      ...(options as any),
+    })
   }
 }

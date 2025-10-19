@@ -73,8 +73,6 @@ describe("Pagination Set Page Modal", () => {
 
       const dataStoreId = container.utilities.actionStore.set(mock())
 
-      console.log(dataStoreId)
-
       const userId = faker.number.int().toString()
 
       const customId = FakerGenerator.generateCustomId({

@@ -1,18 +1,18 @@
 import { mock } from "bun:test"
-
-import { IntentsBitField } from "discord.js"
 import { Database } from "bun:sqlite"
 import { getMigrations, migrate } from "bun-sqlite-migrations"
 import path from "path"
 
+import { IntentsBitField } from "discord.js"
 import { SapphireClient, LogLevel, container, Command, Events } from "@sapphire/framework"
+import { SubcommandPluginEvents } from "@sapphire/plugin-subcommands"
+import { UtilitiesStore } from "@sapphire/plugin-utilities-store"
+import { faker } from "@faker-js/faker"
+
+import { ActionStoreUtility } from "../../utilities/action-store.utility"
 import { EmbedPresetsUtility } from "../../utilities/embed-presets.utility"
 import { PaginationUtility } from "../../utilities/pagination.utility"
-import { UtilitiesStore } from "@sapphire/plugin-utilities-store"
-import { ActionStoreUtility } from "../../utilities/action-store.utility"
 import { FakerGenerator } from "./faker.generator"
-import { faker } from "@faker-js/faker"
-import { SubcommandPluginEvents } from "@sapphire/plugin-subcommands"
 
 export class Mocker {
   static createSapphireClientInstance() {
@@ -31,35 +31,28 @@ export class Mocker {
       info: mock(),
       warn: mock(),
       error: mock(),
-      has: mock((level: LogLevel) => {
-        return level === LogLevel.Debug
-      }),
+      has: mock((level: LogLevel) => level === LogLevel.Debug),
     }
 
+    const store = new UtilitiesStore()
     container.utilities = {
       ...container.utilities,
-      store: new UtilitiesStore(),
-      exposePiece(name, piece) {
-        container.utilities.store.set(name, piece)
-      },
-    }
-
-    container.utilities = {
-      ...container.utilities,
+      store,
       actionStore: new ActionStoreUtility(FakerGenerator.generatePiece()),
       embedPresets: new EmbedPresetsUtility(FakerGenerator.generatePiece(), {}),
       pagination: new PaginationUtility(FakerGenerator.generatePiece(), {}),
-      exposePiece: container.utilities.exposePiece.bind(container.utilities),
+      exposePiece(name, piece) {
+        store.set(name, piece)
+      },
     }
 
-    Mocker.createDatabaseInMemory()
+    this.createDatabaseInMemory()
   }
 
   static async resetSapphireClientInstance() {
     await container.client.destroy()
-
     container.db.close()
-    Mocker.createDatabaseInMemory()
+    this.createDatabaseInMemory()
   }
 
   static createCommandInstance<T extends Command>(CommandClass: new (...args: any[]) => T): T {
@@ -68,7 +61,7 @@ export class Mocker {
         name: faker.word.adjective(),
         path: faker.system.filePath(),
         root: faker.system.directoryPath(),
-        store: container?.utilities?.store ?? {},
+        store: container.utilities.store,
       },
       {},
     )
@@ -78,9 +71,9 @@ export class Mocker {
     const errorHandler = mock()
     container.client.on(Events.ChatInputCommandError, errorHandler)
     container.client.on(SubcommandPluginEvents.ChatInputSubcommandError, errorHandler)
-
     return errorHandler
   }
+
   static mockApiRequest(mockedEndpointMethod: string, implementation: () => Promise<any>) {
     mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => ({
       [mockedEndpointMethod]: implementation,
@@ -88,8 +81,9 @@ export class Mocker {
   }
 
   private static createDatabaseInMemory() {
-    if (!container) throw new Error("Container is not initialized")
-
+    if (!container) {
+      throw new Error("Container is not initialized")
+    }
     container.db = new Database(":memory:")
     migrate(container.db, getMigrations(path.resolve(process.cwd(), "data", "migrations")))
   }
