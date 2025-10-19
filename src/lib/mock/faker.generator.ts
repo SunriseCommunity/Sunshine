@@ -14,6 +14,7 @@ import { faker } from "@faker-js/faker"
 import { Command, CommandStore, container } from "@sapphire/framework"
 import type { DeepPartial } from "@sapphire/utilities"
 import { buildCustomId } from "../utils/discord.util"
+import type { PaginationStore } from "../types/store.types"
 
 function autoMock<T extends object>(base: Partial<T>): T {
   return new Proxy(base as T, {
@@ -38,14 +39,7 @@ const createBaseInteraction = () => ({
   applicationId: faker.string.uuid(),
   channelId: faker.string.uuid(),
   guildId: faker.string.uuid(),
-  channel: null,
-  guild: null,
-  member: null,
-  token: "",
-  version: 0,
-  memberPermissions: null,
   locale: Locale.French,
-  guildLocale: null,
 })
 
 export class FakerGenerator {
@@ -102,9 +96,6 @@ export class FakerGenerator {
       deferred: faker.datatype.boolean(),
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
-      context: null,
-      attachmentSizeLimit: 0,
-      options: options?.options ?? {},
       ...(options as any),
     })
   }
@@ -120,15 +111,6 @@ export class FakerGenerator {
       deferred: faker.datatype.boolean(),
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
-      isFromMessage: false,
-      message: options?.message ?? null,
-      fields: [],
-      isModalSubmit: () => true,
-      isButton: () => false,
-      isSelectMenu: () => false,
-      isAutocomplete: () => false,
-      isCommand: () => false,
-      isContextMenuCommand: () => false,
       ...(options as any),
     })
   }
@@ -149,16 +131,10 @@ export class FakerGenerator {
       applicationId: faker.string.uuid(),
       guildId: faker.string.uuid(),
       type: ApplicationCommandType.ChatInput,
-      guild: null,
       version: `v${faker.number.int({ min: 1, max: 100 })}`,
-      contexts: [],
       client: container.client as any,
       defaultMemberPermissions: new PermissionsBitField(PermissionsBitField.Flags.SendMessages),
       description: faker.lorem.sentence(),
-      options: [],
-      descriptionLocalizations: {},
-      descriptionLocalized: faker.lorem.sentence(),
-      dmPermission: true,
       ...(options as any),
     })
   }
@@ -176,12 +152,25 @@ export class FakerGenerator {
       system: false,
       displayName: username,
       defaultAvatarURL: faker.internet.url(),
-      partial: false,
       tag: `${username}#${faker.string.numeric(4)}`,
       client: container.client as any,
       avatarURL: () => faker.internet.url(),
       displayAvatarURL: () => faker.internet.url(),
       toString: () => `<@${userId}>`,
+      ...(options as any),
+    })
+  }
+
+  static generatePaginationData(options?: DeepPartial<PaginationStore>): PaginationStore {
+    return autoMock<PaginationStore>({
+      handleSetPage:
+        options?.handleSetPage ?? mock(async (state: any) => ({ embed: {}, buttonsRow: {} })),
+      state: {
+        pageSize: options?.state?.pageSize ?? 10,
+        totalPages: options?.state?.totalPages ?? 5,
+        currentPage: options?.state?.currentPage ?? 1,
+        ...(options?.state as any),
+      },
       ...(options as any),
     })
   }
