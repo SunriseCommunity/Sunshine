@@ -80,13 +80,16 @@ export class Mocker {
     return errorHandler
   }
 
-  static mockApiRequest(mockedEndpointMethod: string, implementation: () => Promise<any>) {
+  static mockApiRequest<T>(
+    mockedEndpointMethod: keyof T,
+    implementation: (...args: any[]) => Promise<any>,
+  ) {
     mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => ({
       [mockedEndpointMethod]: implementation,
     }))
   }
 
-  static mockApiRequests(mocks: Record<string, () => Promise<any>>) {
+  static mockApiRequests<T extends Record<string, (...args: any[]) => Promise<any>>>(mocks: T) {
     mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => mocks)
   }
 
