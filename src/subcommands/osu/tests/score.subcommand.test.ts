@@ -20,6 +20,8 @@ describe("Osu Score Subcommand", () => {
     await Mocker.resetSapphireClientInstance()
   })
 
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
+
   it("should display score embed when score ID is provided", async () => {
     const editReplyMock = mock()
     const scoreId = faker.number.int({ min: 1, max: 1000000 })

@@ -53,7 +53,7 @@ export class OsuCommand extends Subcommand {
 
     for (const cmd of subcommandModules) {
       ;(this as any)[cmd.name] = async (interaction: Subcommand.ChatInputCommandInteraction) => {
-        return cmd.run.call(this, interaction)
+        return (cmd.run as any).call(this, interaction)
       }
     }
   }

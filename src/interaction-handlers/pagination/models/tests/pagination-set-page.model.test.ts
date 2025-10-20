@@ -1,25 +1,12 @@
 import { faker } from "@faker-js/faker"
-import {
-  CommandStore,
-  container,
-  InteractionHandlerStore,
-  InteractionHandlerTypes,
-} from "@sapphire/framework"
-import { expect, describe, it, beforeAll, afterAll, jest, mock } from "bun:test"
-import type { OsuCommand } from "../../../../commands/osu.command"
-import { ExtendedError } from "../../../../lib/extended-error"
+import { container, InteractionHandlerStore, InteractionHandlerTypes } from "@sapphire/framework"
+import { expect, describe, it, beforeAll, afterAll, jest, mock, beforeEach } from "bun:test"
 import { FakerGenerator } from "../../../../lib/mock/faker.generator"
 import { Mocker } from "../../../../lib/mock/mocker"
 import { PaginationSetPageModal } from "../pagination-set-page.model"
-import type { PaginationStore } from "../../../../lib/types/store.types"
 import { PaginationInteractionCustomId } from "../../../../lib/types/enum/custom-ids.types"
 
 describe("Pagination Set Page Modal", () => {
-  const modal = new PaginationSetPageModal(
-    { ...FakerGenerator.generateLoaderContext(), store: new InteractionHandlerStore() },
-    { interactionHandlerType: InteractionHandlerTypes.ModalSubmit },
-  )
-
   let errorHandler: jest.Mock
 
   beforeAll(() => {
@@ -30,6 +17,8 @@ describe("Pagination Set Page Modal", () => {
   afterAll(async () => {
     await Mocker.resetSapphireClientInstance()
   })
+
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
 
   describe("parse", async () => {
     it("invalid interaction id provided", async () => {

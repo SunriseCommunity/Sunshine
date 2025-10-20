@@ -1,4 +1,4 @@
-import { expect, describe, it, mock, jest, beforeAll, afterAll } from "bun:test"
+import { expect, describe, it, mock, jest, beforeAll, afterAll, beforeEach } from "bun:test"
 import { MeowCommand } from "../meow.command"
 import { Mocker } from "../../lib/mock/mocker"
 import { FakerGenerator } from "../../lib/mock/faker.generator"
@@ -16,6 +16,8 @@ describe("Meow Command", () => {
   afterAll(async () => {
     await Mocker.resetSapphireClientInstance()
   })
+
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
 
   it("should reply with 'meow! 😺' when chatInputRun is called", async () => {
     const replyMock = mock()

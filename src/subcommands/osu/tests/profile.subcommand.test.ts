@@ -16,13 +16,11 @@ describe("Osu Profile Subcommand", () => {
     errorHandler = Mocker.createErrorHandler()
   })
 
-  beforeEach(() => {
-    errorHandler.mockClear()
-  })
-
   afterAll(async () => {
     await Mocker.resetSapphireClientInstance()
   })
+
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
 
   it("should display profile when username is provided", async () => {
     const editReplyMock = mock()

@@ -21,6 +21,8 @@ describe("Osu Recent Score Subcommand", () => {
     await Mocker.resetSapphireClientInstance()
   })
 
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
+
   it("should display recent score when username is provided", async () => {
     const editReplyMock = mock()
     const username = faker.internet.username()

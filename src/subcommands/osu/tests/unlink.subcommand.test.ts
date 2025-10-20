@@ -1,14 +1,4 @@
-import {
-  expect,
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach,
-  jest,
-  mock,
-} from "bun:test"
+import { expect, describe, it, beforeAll, afterAll, beforeEach, jest, mock } from "bun:test"
 import { container } from "@sapphire/framework"
 import { OsuCommand } from "../../../commands/osu.command"
 import { Mocker } from "../../../lib/mock/mocker"

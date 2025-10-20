@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeAll, afterAll, jest, mock } from "bun:test"
+import { expect, describe, it, beforeAll, afterAll, jest, mock, beforeEach } from "bun:test"
 import { container } from "@sapphire/framework"
 import { OsuCommand } from "../../../commands/osu.command"
 import { Mocker } from "../../../lib/mock/mocker"
@@ -19,6 +19,8 @@ describe("Osu Scores Subcommand", () => {
   afterAll(async () => {
     await Mocker.resetSapphireClientInstance()
   })
+
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
 
   it("should create pagination handler when username is provided", async () => {
     const username = faker.internet.username()
