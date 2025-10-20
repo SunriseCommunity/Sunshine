@@ -6,7 +6,7 @@ export function buildCustomId(
     data?: string[] | undefined
   },
 ): string {
-  const result = `${prefix}:${userId}:${ctx.dataStoreId}:${ctx.data?.join(",")}`
+  const result = `${prefix}:${userId}:${ctx.dataStoreId}:${ctx.data?.join(",") ?? ""}`
   if (result.length > 100) {
     throw new Error("Custom IDs can only have a maximum length of 100")
   }

@@ -14,7 +14,7 @@ import { ExtendedError } from "../../../lib/extended-error"
 export class PaginationSetPageModal extends InteractionHandler {
   @ensureUsedBySameUser()
   @validCustomId(PaginationInteractionCustomId.PAGINATION_ACTION_SELECT_PAGE)
-  public override async parse(interaction: ButtonInteraction) {
+  public override async parse(interaction: ModalSubmitInteraction) {
     const { ctx } = parseCustomId(interaction.customId)
     if (!ctx.dataStoreId) {
       return this.none()

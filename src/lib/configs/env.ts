@@ -37,9 +37,14 @@ export interface IConfig {
 const requiredEnvVariables = ["DISCORD_TOKEN", "SUNRISE_URI"]
 requiredEnvVariables.map((v) => {
   if (!process.env[v]) {
+    if (process.env.NODE_ENV === "test") return
     throw new Error(`${v} is not provided in environment file!`)
   }
 })
+
+const env = ["prod", "dev"].includes(process.env.NODE_ENV ?? "")
+  ? (process.env.NODE_ENV as any)
+  : "dev"
 
 export const config: IConfig = {
   discord: {
@@ -52,8 +57,6 @@ export const config: IConfig = {
     newScoresChannel: process.env["NEW_SCORES_CHANNED_ID"] ?? undefined,
     beatmapsEventsChannel: process.env["BEATMAPS_STATUSES_CHANNED_ID"] ?? undefined,
   },
-  environment: ["prod", "dev"].includes(process.env.NODE_ENV ?? "")
-    ? (process.env.NODE_ENV as any)
-    : "dev",
-  json: require(path.resolve(process.cwd(), "config", `${process.env.NODE_ENV ?? "dev"}.json`)),
+  environment: env,
+  json: require(path.resolve(process.cwd(), "config", `${env}.json`)),
 }
