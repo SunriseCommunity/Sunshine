@@ -3,6 +3,7 @@ import { jest, mock } from "bun:test"
 import {
   ApplicationCommand,
   ApplicationCommandType,
+  ButtonInteraction,
   InteractionType,
   Locale,
   ModalSubmitInteraction,
@@ -115,6 +116,19 @@ export class FakerGenerator {
       ...createBaseInteraction(),
       user: options?.user ?? FakerGenerator.generateUser(),
       type: InteractionType.ModalSubmit,
+      customId: faker.lorem.slug(),
+      deferred: faker.datatype.boolean(),
+      ephemeral: faker.datatype.boolean(),
+      replied: faker.datatype.boolean(),
+      ...(options as any),
+    })
+  }
+
+  static generateButtonInteraction(options?: DeepPartial<ButtonInteraction>): ButtonInteraction {
+    return autoMock<ButtonInteraction>({
+      ...createBaseInteraction(),
+      user: options?.user ?? FakerGenerator.generateUser(),
+      type: InteractionType.MessageComponent,
       customId: faker.lorem.slug(),
       deferred: faker.datatype.boolean(),
       ephemeral: faker.datatype.boolean(),
