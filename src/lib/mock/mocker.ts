@@ -1,4 +1,4 @@
-import { mock } from "bun:test"
+import { jest, mock } from "bun:test"
 import { Database } from "bun:sqlite"
 import { getMigrations, migrate } from "bun-sqlite-migrations"
 import path from "path"
@@ -59,6 +59,23 @@ export class Mocker {
     await container.client.destroy()
     container.db.close()
     this.createDatabaseInMemory()
+  }
+
+  static beforeEachCleanup(errorHandler: jest.Mock) {
+    errorHandler.mockClear()
+    Mocker.resetDatabase()
+  }
+
+  private static resetDatabase() {
+    const tables = container.db
+      .query("SELECT name FROM sqlite_master WHERE type='table'")
+      .all() as { name: string }[]
+
+    for (const table of tables) {
+      if (table.name !== "sqlite_sequence") {
+        container.db.exec(`DELETE FROM ${table.name}`)
+      }
+    }
   }
 
   static createCommandInstance<T extends Command>(CommandClass: new (...args: any[]) => T): T {
