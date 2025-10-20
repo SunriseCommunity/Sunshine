@@ -320,7 +320,7 @@ describe("Osu Scores Subcommand", () => {
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: "API Error",
+        message: "❓ I couldn't find user with such username",
       }),
       expect.anything(),
     )

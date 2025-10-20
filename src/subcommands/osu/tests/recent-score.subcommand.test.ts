@@ -484,7 +484,7 @@ describe("Osu Recent Score Subcommand", () => {
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: "API Error",
+        message: "❓ I couldn't find user with such username",
       }),
       expect.anything(),
     )
@@ -522,7 +522,7 @@ describe("Osu Recent Score Subcommand", () => {
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: "Scores API Error",
+        message: "Couldn't fetch requested user's recent score!",
       }),
       expect.anything(),
     )
