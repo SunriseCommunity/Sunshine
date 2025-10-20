@@ -11,7 +11,7 @@ This is a Discord Bot build with [Sapphire framework](https://sapphirejs.dev/), 
 
 It is a part of the Sunrise project, which aims to create a fully functional osu! private server with all the features that the official server has. 
 
-This project also has **automated testing** and **CI/CD** setup with GitHub Actions! ✨
+This project also has **automated testing** setup with GitHub Actions! ✨
 
 ## Installation (with docker) 🐳
 1. Clone the repository
