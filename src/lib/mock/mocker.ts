@@ -13,6 +13,7 @@ import { ActionStoreUtility } from "../../utilities/action-store.utility"
 import { EmbedPresetsUtility } from "../../utilities/embed-presets.utility"
 import { PaginationUtility } from "../../utilities/pagination.utility"
 import { FakerGenerator } from "./faker.generator"
+import { config } from "../configs/env"
 
 export class Mocker {
   static createSapphireClientInstance() {
@@ -44,6 +45,11 @@ export class Mocker {
       exposePiece(name, piece) {
         store.set(name, piece)
       },
+    }
+
+    container.config = {
+      ...config,
+      sunrise: { uri: "sunrise.example.com" },
     }
 
     this.createDatabaseInMemory()
@@ -78,6 +84,10 @@ export class Mocker {
     mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => ({
       [mockedEndpointMethod]: implementation,
     }))
+  }
+
+  static mockApiRequests(mocks: Record<string, () => Promise<any>>) {
+    mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => mocks)
   }
 
   private static createDatabaseInMemory() {

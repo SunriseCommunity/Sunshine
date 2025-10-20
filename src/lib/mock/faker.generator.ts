@@ -15,6 +15,8 @@ import { Command, CommandStore, container } from "@sapphire/framework"
 import type { DeepPartial } from "@sapphire/utilities"
 import { buildCustomId } from "../utils/discord.util"
 import type { PaginationStore } from "../types/store.types"
+import { GameMode, BeatmapStatusWeb } from "../types/api"
+import type { ScoreResponse, BeatmapResponse, UserResponse } from "../types/api"
 
 function autoMock<T extends object>(base: Partial<T>): T {
   return new Proxy(base as T, {
@@ -173,5 +175,95 @@ export class FakerGenerator {
       },
       ...(options as any),
     })
+  }
+
+  static generateOsuUser(options?: Partial<UserResponse>): UserResponse {
+    return {
+      user_id: faker.number.int({ min: 1, max: 1000000 }),
+      username: faker.internet.username(),
+      country_code: faker.location.countryCode(),
+      avatar_url: faker.internet.url(),
+      banner_url: faker.internet.url(),
+      register_date: new Date().toISOString(),
+      last_online_time: new Date().toISOString(),
+      restricted: false,
+      silenced_until: null,
+      default_gamemode: GameMode.STANDARD,
+      badges: [],
+      user_status: "online",
+      description: null,
+      ...options,
+    }
+  }
+
+  static generateScore(options?: Partial<ScoreResponse>): ScoreResponse {
+    const mockUser = options?.user ?? FakerGenerator.generateOsuUser()
+
+    return {
+      id: faker.number.int({ min: 1, max: 1000000 }),
+      beatmap_id: faker.number.int({ min: 1, max: 1000000 }),
+      user_id: mockUser.user_id,
+      user: mockUser,
+      total_score: faker.number.int({ min: 1000000, max: 100000000 }),
+      max_combo: faker.number.int({ min: 100, max: 2000 }),
+      count_300: faker.number.int({ min: 100, max: 1000 }),
+      count_100: faker.number.int({ min: 10, max: 100 }),
+      count_50: faker.number.int({ min: 0, max: 50 }),
+      count_miss: faker.number.int({ min: 0, max: 10 }),
+      count_geki: faker.number.int({ min: 0, max: 100 }),
+      count_katu: faker.number.int({ min: 0, max: 100 }),
+      performance_points: faker.number.float({ min: 100, max: 1000 }),
+      grade: ["S", "A", "B", "C", "D", "F"][faker.number.int({ min: 0, max: 5 })] as string,
+      accuracy: faker.number.float({ min: 90, max: 100 }),
+      game_mode: GameMode.STANDARD,
+      game_mode_extended: GameMode.STANDARD,
+      is_passed: true,
+      has_replay: true,
+      is_perfect: false,
+      when_played: new Date().toISOString(),
+      mods: null,
+      mods_int: 0,
+      leaderboard_rank: null,
+      ...options,
+    }
+  }
+
+  static generateBeatmap(options?: Partial<BeatmapResponse>): BeatmapResponse {
+    return {
+      id: faker.number.int({ min: 1, max: 1000000 }),
+      beatmapset_id: faker.number.int({ min: 1, max: 100000 }),
+      hash: faker.string.alphanumeric(32),
+      version: faker.word.adjective(),
+      status: BeatmapStatusWeb.RANKED,
+      star_rating_osu: faker.number.float({ min: 1, max: 10 }),
+      star_rating_taiko: faker.number.float({ min: 1, max: 10 }),
+      star_rating_ctb: faker.number.float({ min: 1, max: 10 }),
+      star_rating_mania: faker.number.float({ min: 1, max: 10 }),
+      total_length: faker.number.int({ min: 60, max: 600 }),
+      max_combo: faker.number.int({ min: 100, max: 2000 }),
+      accuracy: faker.number.float({ min: 1, max: 10 }),
+      ar: faker.number.float({ min: 1, max: 10 }),
+      bpm: faker.number.float({ min: 80, max: 200 }),
+      convert: false,
+      count_circles: faker.number.int({ min: 100, max: 1000 }),
+      count_sliders: faker.number.int({ min: 50, max: 500 }),
+      count_spinners: faker.number.int({ min: 0, max: 10 }),
+      cs: faker.number.float({ min: 1, max: 10 }),
+      deleted_at: null,
+      drain: faker.number.float({ min: 1, max: 10 }),
+      hit_length: faker.number.int({ min: 60, max: 600 }),
+      is_scoreable: true,
+      is_ranked: true,
+      last_updated: new Date().toISOString(),
+      mode_int: 0,
+      mode: GameMode.STANDARD,
+      ranked: 1,
+      title: faker.music.songName(),
+      artist: faker.person.fullName(),
+      creator: faker.internet.username(),
+      creator_id: faker.number.int({ min: 1, max: 100000 }),
+      beatmap_nominator_user: undefined,
+      ...options,
+    }
   }
 }
