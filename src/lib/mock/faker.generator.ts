@@ -16,7 +16,13 @@ import type { DeepPartial } from "@sapphire/utilities"
 import { buildCustomId } from "../utils/discord.util"
 import type { PaginationStore } from "../types/store.types"
 import { GameMode, BeatmapStatusWeb } from "../types/api"
-import type { ScoreResponse, BeatmapResponse, UserResponse } from "../types/api"
+import type {
+  ScoreResponse,
+  BeatmapResponse,
+  UserResponse,
+  UserStatsResponse,
+  UserWithStats,
+} from "../types/api"
 
 function autoMock<T extends object>(base: Partial<T>): T {
   return new Proxy(base as T, {
@@ -182,8 +188,8 @@ export class FakerGenerator {
       user_id: faker.number.int({ min: 1, max: 1000000 }),
       username: faker.internet.username(),
       country_code: faker.location.countryCode(),
-      avatar_url: faker.internet.url(),
-      banner_url: faker.internet.url(),
+      avatar_url: "https://placehold.co/400x400",
+      banner_url: "https://placehold.co/1200x300",
       register_date: new Date().toISOString(),
       last_online_time: new Date().toISOString(),
       restricted: false,
@@ -264,6 +270,46 @@ export class FakerGenerator {
       creator_id: faker.number.int({ min: 1, max: 100000 }),
       beatmap_nominator_user: undefined,
       ...options,
+    }
+  }
+
+  static generateUserStats(options?: Partial<UserStatsResponse>): UserStatsResponse {
+    const userId = options?.user_id ?? faker.number.int({ min: 1, max: 1000000 })
+
+    return {
+      user_id: userId,
+      gamemode: GameMode.STANDARD,
+      accuracy: faker.number.float({ min: 85, max: 100 }),
+      total_score: faker.number.int({ min: 1000000, max: 1000000000 }),
+      ranked_score: faker.number.int({ min: 1000000, max: 100000000 }),
+      play_count: faker.number.int({ min: 100, max: 10000 }),
+      pp: faker.number.float({ min: 1000, max: 10000 }),
+      rank: faker.number.int({ min: 1, max: 100000 }),
+      country_rank: faker.number.int({ min: 1, max: 10000 }),
+      max_combo: faker.number.int({ min: 500, max: 5000 }),
+      play_time: faker.number.int({ min: 10000, max: 1000000 }),
+      total_hits: faker.number.int({ min: 10000, max: 1000000 }),
+      best_global_rank: faker.number.int({ min: 1, max: 50000 }),
+      best_global_rank_date: new Date().toISOString(),
+      best_country_rank: faker.number.int({ min: 1, max: 5000 }),
+      best_country_rank_date: new Date().toISOString(),
+      ...options,
+    }
+  }
+
+  static generateUserWithStats(options?: {
+    user?: Partial<UserResponse>
+    stats?: Partial<UserStatsResponse>
+  }): UserWithStats {
+    const user = FakerGenerator.generateOsuUser(options?.user)
+    const stats = FakerGenerator.generateUserStats({
+      user_id: user.user_id,
+      ...options?.stats,
+    })
+
+    return {
+      user,
+      stats,
     }
   }
 }
