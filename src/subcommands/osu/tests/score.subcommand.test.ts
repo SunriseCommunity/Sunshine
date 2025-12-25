@@ -1,33 +1,34 @@
-import { expect, describe, it, beforeAll, afterAll, beforeEach, jest, mock } from "bun:test"
-import { container } from "@sapphire/framework"
-import { OsuCommand } from "../../../commands/osu.command"
-import { Mocker } from "../../../lib/mock/mocker"
-import { FakerGenerator } from "../../../lib/mock/faker.generator"
-import { faker } from "@faker-js/faker"
-import { ButtonStyle } from "discord.js"
+import { faker } from "@faker-js/faker";
+import { container } from "@sapphire/framework";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, jest, mock } from "bun:test";
+import { ButtonStyle } from "discord.js";
+
+import { OsuCommand } from "../../../commands/osu.command";
+import { FakerGenerator } from "../../../lib/mock/faker.generator";
+import { Mocker } from "../../../lib/mock/mocker";
 
 describe("Osu Score Subcommand", () => {
-  let osuCommand: OsuCommand
-  let errorHandler: jest.Mock
+  let osuCommand: OsuCommand;
+  let errorHandler: jest.Mock;
 
   beforeAll(() => {
-    Mocker.createSapphireClientInstance()
-    osuCommand = Mocker.createCommandInstance(OsuCommand)
-    errorHandler = Mocker.createErrorHandler()
-  })
+    Mocker.createSapphireClientInstance();
+    osuCommand = Mocker.createCommandInstance(OsuCommand);
+    errorHandler = Mocker.createErrorHandler();
+  });
 
   afterAll(async () => {
-    await Mocker.resetSapphireClientInstance()
-  })
+    await Mocker.resetSapphireClientInstance();
+  });
 
-  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler));
 
   it("should display score embed when score ID is provided", async () => {
-    const editReplyMock = mock()
-    const scoreId = faker.number.int({ min: 1, max: 1000000 })
+    const editReplyMock = mock();
+    const scoreId = faker.number.int({ min: 1, max: 1000000 });
 
-    const mockScore = FakerGenerator.generateScore({ id: scoreId })
-    const mockBeatmap = FakerGenerator.generateBeatmap({ id: mockScore.beatmap_id })
+    const mockScore = FakerGenerator.generateScore({ id: scoreId });
+    const mockBeatmap = FakerGenerator.generateBeatmap({ id: mockScore.beatmap_id });
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -38,7 +39,7 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     Mocker.mockApiRequests({
       getScoreById: async () => ({
@@ -47,19 +48,19 @@ describe("Osu Score Subcommand", () => {
       getBeatmapById: async () => ({
         data: mockBeatmap,
       }),
-    })
+    });
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
-    expect(errorHandler).not.toBeCalled()
+    expect(errorHandler).not.toBeCalled();
 
     const scoreEmbed = await osuCommand.container.utilities.embedPresets.getScoreEmbed(
       mockScore,
       mockBeatmap,
-    )
+    );
 
     expect(editReplyMock).toHaveBeenCalledWith({
       embeds: [
@@ -79,17 +80,17 @@ describe("Osu Score Subcommand", () => {
           ],
         }),
       ],
-    })
-  })
+    });
+  });
 
   it("should handle score link with sunrise URI", async () => {
-    const editReplyMock = mock()
-    const scoreId = faker.number.int({ min: 1, max: 1000000 })
-    const sunriseUri = container.config.sunrise.uri
-    const scoreLink = `https://${sunriseUri}/score/${scoreId}`
+    const editReplyMock = mock();
+    const scoreId = faker.number.int({ min: 1, max: 1000000 });
+    const sunriseUri = container.config.sunrise.uri;
+    const scoreLink = `https://${sunriseUri}/score/${scoreId}`;
 
-    const mockScore = FakerGenerator.generateScore({ id: scoreId })
-    const mockBeatmap = FakerGenerator.generateBeatmap({ id: mockScore.beatmap_id })
+    const mockScore = FakerGenerator.generateScore({ id: scoreId });
+    const mockBeatmap = FakerGenerator.generateBeatmap({ id: mockScore.beatmap_id });
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -100,7 +101,7 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     Mocker.mockApiRequests({
       getScoreById: async () => ({
@@ -109,19 +110,19 @@ describe("Osu Score Subcommand", () => {
       getBeatmapById: async () => ({
         data: mockBeatmap,
       }),
-    })
+    });
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
-    expect(errorHandler).not.toBeCalled()
+    expect(errorHandler).not.toBeCalled();
 
     const scoreEmbed = await osuCommand.container.utilities.embedPresets.getScoreEmbed(
       mockScore,
       mockBeatmap,
-    )
+    );
 
     expect(editReplyMock).toHaveBeenCalledWith({
       embeds: [
@@ -142,8 +143,8 @@ describe("Osu Score Subcommand", () => {
           ],
         }),
       ],
-    })
-  })
+    });
+  });
 
   it("should throw error when invalid score ID is provided", async () => {
     const interaction = FakerGenerator.withSubcommand(
@@ -155,7 +156,7 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     Mocker.mockApiRequests({
       getScoreById: async () => ({
@@ -164,20 +165,20 @@ describe("Osu Score Subcommand", () => {
       getBeatmapById: async () => ({
         error: "Beatmap not found",
       }),
-    })
+    });
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "❓ I couldn't find score with such data",
       }),
       expect.anything(),
-    )
-  })
+    );
+  });
 
   it("should throw error when no score ID is provided", async () => {
     const interaction = FakerGenerator.withSubcommand(
@@ -189,23 +190,23 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "❓ Bad score id/link is provided",
       }),
       expect.anything(),
-    )
-  })
+    );
+  });
 
   it("should throw error when score is not found", async () => {
-    const scoreId = faker.number.int({ min: 1, max: 1000000 })
+    const scoreId = faker.number.int({ min: 1, max: 1000000 });
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -216,29 +217,29 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     Mocker.mockApiRequest("getScoreById", async () => ({
       error: "Score not found",
-    }))
+    }));
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "❓ I couldn't find score with such data",
       }),
       expect.anything(),
-    )
-  })
+    );
+  });
 
   it("should throw error when beatmap is not found", async () => {
-    const scoreId = faker.number.int({ min: 1, max: 1000000 })
+    const scoreId = faker.number.int({ min: 1, max: 1000000 });
 
-    const mockScore = FakerGenerator.generateScore({ id: scoreId })
+    const mockScore = FakerGenerator.generateScore({ id: scoreId });
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -249,7 +250,7 @@ describe("Osu Score Subcommand", () => {
         },
       }),
       "score",
-    )
+    );
 
     Mocker.mockApiRequests({
       getScoreById: async () => ({
@@ -258,18 +259,18 @@ describe("Osu Score Subcommand", () => {
       getBeatmapById: async () => ({
         error: "Beatmap not found",
       }),
-    })
+    });
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "score",
-    })
+    });
 
     expect(errorHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "❓ I couldn't fetch score's beatmap data",
       }),
       expect.anything(),
-    )
-  })
-})
+    );
+  });
+});

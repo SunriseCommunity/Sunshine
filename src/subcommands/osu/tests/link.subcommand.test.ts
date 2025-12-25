@@ -1,30 +1,31 @@
-import { expect, describe, it, beforeAll, afterAll, jest, mock, beforeEach } from "bun:test"
-import { container } from "@sapphire/framework"
-import { OsuCommand } from "../../../commands/osu.command"
-import { Mocker } from "../../../lib/mock/mocker"
-import { FakerGenerator } from "../../../lib/mock/faker.generator"
-import { faker } from "@faker-js/faker"
-import { ExtendedError } from "../../../lib/extended-error"
+import { faker } from "@faker-js/faker";
+import { container } from "@sapphire/framework";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, jest, mock } from "bun:test";
+
+import { OsuCommand } from "../../../commands/osu.command";
+import { ExtendedError } from "../../../lib/extended-error";
+import { FakerGenerator } from "../../../lib/mock/faker.generator";
+import { Mocker } from "../../../lib/mock/mocker";
 
 describe("Osu Link Subcommand", () => {
-  let osuCommand: OsuCommand
-  let errorHandler: jest.Mock
+  let osuCommand: OsuCommand;
+  let errorHandler: jest.Mock;
 
   beforeAll(() => {
-    Mocker.createSapphireClientInstance()
-    osuCommand = Mocker.createCommandInstance(OsuCommand)
-    errorHandler = Mocker.createErrorHandler()
-  })
+    Mocker.createSapphireClientInstance();
+    osuCommand = Mocker.createCommandInstance(OsuCommand);
+    errorHandler = Mocker.createErrorHandler();
+  });
 
   afterAll(async () => {
-    await Mocker.resetSapphireClientInstance()
-  })
+    await Mocker.resetSapphireClientInstance();
+  });
 
-  beforeEach(() => Mocker.beforeEachCleanup(errorHandler))
+  beforeEach(() => Mocker.beforeEachCleanup(errorHandler));
 
   it("should reply with success message when link is successful", async () => {
-    const editReplyMock = mock()
-    const username = faker.internet.username()
+    const editReplyMock = mock();
+    const username = faker.internet.username();
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -35,24 +36,24 @@ describe("Osu Link Subcommand", () => {
         },
       }),
       "link",
-    )
+    );
 
-    const osuUserId = faker.number.int({ min: 1, max: 1000000 })
+    const osuUserId = faker.number.int({ min: 1, max: 1000000 });
 
     Mocker.mockApiRequest("getUserSearch", async () => ({
-      data: [{ user_id: osuUserId, username: username }],
-    }))
+      data: [{ user_id: osuUserId, username }],
+    }));
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "link",
-    })
+    });
 
     const expectedEmbed = container.utilities.embedPresets.getSuccessEmbed(
       `🙂 You are now **${username}**!`,
-    )
+    );
 
-    expect(errorHandler).not.toBeCalled()
+    expect(errorHandler).not.toBeCalled();
 
     expect(editReplyMock).toHaveBeenLastCalledWith({
       embeds: [
@@ -62,19 +63,19 @@ describe("Osu Link Subcommand", () => {
           }),
         }),
       ],
-    })
+    });
 
-    const { db } = container
+    const { db } = container;
 
     const row = db.query("SELECT osu_user_id FROM connections WHERE discord_user_id = $1").get({
       $1: interaction.user.id,
-    })
+    });
 
-    expect(row).toEqual({ osu_user_id: osuUserId.toString() })
-  })
+    expect(row).toEqual({ osu_user_id: osuUserId.toString() });
+  });
 
   it("should reply with error message when link fails", async () => {
-    const username = faker.internet.username()
+    const username = faker.internet.username();
 
     const interaction = FakerGenerator.withSubcommand(
       FakerGenerator.generateInteraction({
@@ -85,25 +86,25 @@ describe("Osu Link Subcommand", () => {
         },
       }),
       "link",
-    )
+    );
 
     Mocker.mockApiRequest("getUserSearch", async () => ({
       error: "User not found",
-    }))
+    }));
 
     await osuCommand.chatInputRun(interaction, {
       commandId: faker.string.uuid(),
       commandName: "link",
-    })
+    });
 
-    expect(errorHandler).toHaveBeenCalledWith(expect.any(ExtendedError), expect.anything())
+    expect(errorHandler).toHaveBeenCalledWith(expect.any(ExtendedError), expect.anything());
 
-    const { db } = container
+    const { db } = container;
 
     const row = db.query("SELECT osu_user_id FROM connections WHERE discord_user_id = $1").get({
       $1: interaction.user.id,
-    })
+    });
 
-    expect(row).toBeNull()
-  })
-})
+    expect(row).toBeNull();
+  });
+});

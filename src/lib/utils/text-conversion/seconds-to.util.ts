@@ -1,9 +1,9 @@
-export const secondsToMinutes = (justSeconds: any, options: any) => {
-  const minutes = Math.floor(justSeconds / 60)
-  const seconds = justSeconds % 60
+export function secondsToMinutes(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
   function padTo2Digits(num: any) {
-    return num.toString().padStart(2, "0")
+    return num.toString().padStart(2, "0");
   }
-  const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`
-  return result
+  const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+  return result;
 }

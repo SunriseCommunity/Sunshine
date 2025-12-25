@@ -1,12 +1,12 @@
-import { ApplyOptions } from "@sapphire/decorators"
-import { Listener } from "@sapphire/framework"
+import { ApplyOptions } from "@sapphire/decorators";
+import { Listener } from "@sapphire/framework";
+import type { ChatInputCommandSubcommandMappingMethod, ChatInputSubcommandSuccessPayload } from "@sapphire/plugin-subcommands";
 import {
   SubcommandPluginEvents,
-  type ChatInputCommandSubcommandMappingMethod,
-  type ChatInputSubcommandSuccessPayload,
-} from "@sapphire/plugin-subcommands"
-import { logCommand } from "../../lib/utils/command-logger.util"
-import type { Interaction } from "discord.js"
+} from "@sapphire/plugin-subcommands";
+import type { Interaction } from "discord.js";
+
+import { logCommand } from "../../lib/utils/command-logger.util";
 
 @ApplyOptions<Listener.Options>({
   name: SubcommandPluginEvents.ChatInputSubcommandSuccess,
@@ -17,6 +17,6 @@ export class ChatInputSubcommandSuccessListener extends Listener {
     subcommand: ChatInputCommandSubcommandMappingMethod,
     payload: ChatInputSubcommandSuccessPayload,
   ) {
-    logCommand(payload, subcommand)
+    logCommand(payload, subcommand);
   }
 }

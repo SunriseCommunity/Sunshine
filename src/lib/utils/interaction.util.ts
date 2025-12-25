@@ -1,6 +1,7 @@
-import type { AnyInteraction } from "@sapphire/discord.js-utilities"
-import { AutocompleteInteraction, Colors, EmbedBuilder } from "discord.js"
-import type { EmbedPresetsUtility } from "../../utilities/embed-presets.utility"
+import type { AnyInteraction } from "@sapphire/discord.js-utilities";
+import type { AutocompleteInteraction } from "discord.js";
+
+import type { EmbedPresetsUtility } from "../../utilities/embed-presets.utility";
 
 export function interactionError(
   embedPresets: EmbedPresetsUtility,
@@ -10,9 +11,9 @@ export function interactionError(
   const payload = {
     embeds: [embedPresets.getErrorEmbed("Uh-oh!", message)],
     ephemeral: true,
-  }
+  };
 
   return interaction.deferred || interaction.replied
     ? interaction.followUp(payload)
-    : interaction.reply(payload)
+    : interaction.reply(payload);
 }
