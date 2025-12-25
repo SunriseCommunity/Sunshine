@@ -1,26 +1,24 @@
-import { ApplyOptions } from "@sapphire/decorators"
-import { Utility } from "@sapphire/plugin-utilities-store"
+import { ApplyOptions } from "@sapphire/decorators";
+import { Utility } from "@sapphire/plugin-utilities-store";
+import type { HexColorString } from "discord.js";
+import { bold, EmbedBuilder, inlineCode, time } from "discord.js";
+import { getAverageColor } from "fast-average-color-node";
+
+import { config } from "../lib/configs/env";
+import type { BeatmapResponse, CustomBeatmapStatusChangeResponse, ScoreResponse, UserResponse, UserStatsResponse } from "../lib/types/api";
 import {
   GameMode,
   getBeatmapByIdPp,
   getUserByIdGrades,
   getUserByIdScores,
   ScoreTableType,
-  type BeatmapResponse,
-  type CustomBeatmapStatusChangeResponse,
-  type ScoreResponse,
-  type UserResponse,
-  type UserStatsResponse,
-} from "../lib/types/api"
-import { numberWith } from "../lib/utils/text-conversion/number-with.util"
-import { bold, inlineCode, EmbedBuilder, type HexColorString, time } from "discord.js"
-import { config } from "../lib/configs/env"
-import { getDuration } from "../lib/utils/text-conversion/get-duration.util"
-import { getAverageColor } from "fast-average-color-node"
-import { tryToGetImage } from "../lib/utils/fetch.util"
-import getBeatmapStatusIcon, { getScoreRankEmoji } from "../lib/utils/osu/emoji.util"
-import { getBeatmapStarRating } from "../lib/utils/osu/star-rating.util"
-import { secondsToMinutes } from "../lib/utils/text-conversion/seconds-to.util"
+} from "../lib/types/api";
+import { tryToGetImage } from "../lib/utils/fetch.util";
+import getBeatmapStatusIcon, { getScoreRankEmoji } from "../lib/utils/osu/emoji.util";
+import { getBeatmapStarRating } from "../lib/utils/osu/star-rating.util";
+import { getDuration } from "../lib/utils/text-conversion/get-duration.util";
+import { numberWith } from "../lib/utils/text-conversion/number-with.util";
+import { secondsToMinutes } from "../lib/utils/text-conversion/seconds-to.util";
 
 @ApplyOptions<Utility.Options>({ name: "embedPresets" })
 export class EmbedPresetsUtility extends Utility {
@@ -29,8 +27,8 @@ export class EmbedPresetsUtility extends Utility {
       .setTitle(Title.slice(0, 255))
       .setDescription(message ?? null)
       .setColor("Green")
-      .setTimestamp()
-    return createEmbed
+      .setTimestamp();
+    return createEmbed;
   }
 
   public getErrorEmbed(Title: string, message?: string) {
@@ -39,8 +37,8 @@ export class EmbedPresetsUtility extends Utility {
       .setDescription(message ?? null)
       .setColor("Red")
       .setFooter({ text: "Im sorry! >.<" })
-      .setTimestamp()
-    return createEmbed
+      .setTimestamp();
+    return createEmbed;
   }
 
   public async getUserEmbed(user: UserResponse, stats: UserStatsResponse) {
@@ -57,27 +55,27 @@ export class EmbedPresetsUtility extends Utility {
         path: { id: user.user_id },
         query: { mode: stats.gamemode },
       }),
-    ])
+    ]);
 
     if (!topScoresResult || topScoresResult.error) {
-      throw new Error("EmbedPresetsUtility: Couldn't fetch user's top scores")
+      throw new Error("EmbedPresetsUtility: Couldn't fetch user's top scores");
     }
 
     if (!userGradesResult || userGradesResult.error) {
-      throw new Error("EmbedPresetsUtility: Couldn't fetch user's grades")
+      throw new Error("EmbedPresetsUtility: Couldn't fetch user's grades");
     }
 
-    const firstPlacesCount = topScoresResult.data?.total_count ?? 0
+    const firstPlacesCount = topScoresResult.data?.total_count ?? 0;
 
-    const color = await getAverageColor(user.avatar_url)
+    const color = await getAverageColor(user.avatar_url);
 
-    const lastOnlineTime = new Date(user.last_online_time)
-    const registerTime = new Date(user.register_date)
+    const lastOnlineTime = new Date(user.last_online_time);
+    const registerTime = new Date(user.register_date);
 
-    const userStatus =
-      user.user_status == "Offline"
+    const userStatus
+      = user.user_status === "Offline"
         ? `🍂 ${bold(`Offline.`)}\n` + `Last time online: ${bold(time(lastOnlineTime, "R"))}`
-        : `🌿 ${bold(user.user_status)}`
+        : `🌿 ${bold(user.user_status)}`;
 
     const infoValues = [
       { name: "Status", value: userStatus },
@@ -88,16 +86,16 @@ export class EmbedPresetsUtility extends Utility {
       {
         name: "Current rank",
         value:
-          `${bold("#" + stats.rank)}` +
-          " " +
-          `(:flag_${user.country_code.toLowerCase()}: #${stats.country_rank})`,
+          `${bold(`#${stats.rank}`)}`
+          + " "
+          + `(:flag_${user.country_code.toLowerCase()}: #${stats.country_rank})`,
       },
       {
         name: "Peak rank",
         value:
-          `${bold("#" + stats.best_global_rank)}` +
-          " " +
-          `(:flag_${user.country_code.toLowerCase()}: #${stats.best_country_rank})`,
+          `${bold(`#${stats.best_global_rank}`)}`
+          + " "
+          + `(:flag_${user.country_code.toLowerCase()}: #${stats.best_country_rank})`,
       },
       { name: null, value: "" },
       {
@@ -113,9 +111,9 @@ export class EmbedPresetsUtility extends Utility {
       {
         name: "Playcount",
         value:
-          inlineCode(numberWith(stats.play_count, ",")) +
-          " " +
-          `(${inlineCode(getDuration(stats.play_time / 1000))})`,
+          `${inlineCode(numberWith(stats.play_count, ","))
+          } `
+          + `(${inlineCode(getDuration(stats.play_time / 1000))})`,
       },
       {
         name: "Total score",
@@ -127,24 +125,27 @@ export class EmbedPresetsUtility extends Utility {
         name: "Ranked score",
         value: inlineCode(numberWith(stats.ranked_score, ",")),
       },
-    ]
+    ];
 
     const description = infoValues.reduce((pr, cur) => {
       if (cur.name) {
-        pr += `${cur.name}: `
+        // eslint-disable-next-line no-param-reassign -- reasonable here
+        pr += `${cur.name}: `;
       }
 
-      pr += cur.value
+      // eslint-disable-next-line no-param-reassign  -- reasonable here
+      pr += cur.value;
 
       if (cur.newLine !== false) {
-        pr += "\n"
+        // eslint-disable-next-line no-param-reassign  -- reasonable here
+        pr += "\n";
       }
 
-      return pr
-    }, "")
+      return pr;
+    }, "");
 
-    const { A, S, SH, X, XH } = this.container.config.json.emojis.ranks
-    const { count_a, count_s, count_sh, count_x, count_xh } = userGradesResult.data
+    const { A, S, SH, X, XH } = this.container.config.json.emojis.ranks;
+    const { count_a, count_s, count_sh, count_x, count_xh } = userGradesResult.data;
 
     const userEmbed = new EmbedBuilder()
       .setAuthor({
@@ -169,15 +170,15 @@ export class EmbedPresetsUtility extends Utility {
       ])
       .setFooter({
         text: `${stats.gamemode} · osu!sunrise`,
-      })
+      });
 
-    return userEmbed
+    return userEmbed;
   }
 
   public async getScoreEmbed(
     score: ScoreResponse,
     beatmap: BeatmapResponse,
-    isScoreNew: boolean = false,
+    isScoreNew = false,
   ) {
     if (score.mods_int && score.mods_int > 0) {
       const pp = await getBeatmapByIdPp({
@@ -188,57 +189,57 @@ export class EmbedPresetsUtility extends Utility {
           mods: score.mods_int as any,
           mode: score.game_mode,
         },
-      })
+      });
 
       if (!pp || pp.error) {
-        throw new Error("EmbedPresetsUtility: Couldn't fetch beatmaps modded star rating")
+        throw new Error("EmbedPresetsUtility: Couldn't fetch beatmaps modded star rating");
       }
 
-      beatmap.star_rating_ctb = Number(pp.data.difficulty.stars.toFixed(2))
-      beatmap.star_rating_mania = Number(pp.data.difficulty.stars.toFixed(2))
-      beatmap.star_rating_osu = Number(pp.data.difficulty.stars.toFixed(2))
-      beatmap.star_rating_taiko = Number(pp.data.difficulty.stars.toFixed(2))
+      beatmap.star_rating_ctb = Number(pp.data.difficulty.stars.toFixed(2));
+      beatmap.star_rating_mania = Number(pp.data.difficulty.stars.toFixed(2));
+      beatmap.star_rating_osu = Number(pp.data.difficulty.stars.toFixed(2));
+      beatmap.star_rating_taiko = Number(pp.data.difficulty.stars.toFixed(2));
     }
 
     const beatmapBannerImage = await tryToGetImage(
       `https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/list@2x.jpg`,
-    )
+    );
 
-    const color = await getAverageColor(beatmapBannerImage)
+    const color = await getAverageColor(beatmapBannerImage);
 
-    const whenPlayedDate = new Date(score.when_played)
+    const whenPlayedDate = new Date(score.when_played);
 
-    var titleText = isScoreNew ? "new score submission" : "submitted score"
+    const titleText = isScoreNew ? "new score submission" : "submitted score";
 
-    let hitCounts = null
+    let hitCounts = null;
 
     switch (score.game_mode) {
       case GameMode.STANDARD:
-        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`
-        break
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`;
+        break;
       case GameMode.TAIKO:
-        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_miss}]`
-        break
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_miss}]`;
+        break;
       case GameMode.CATCH_THE_BEAT:
-        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`
-        break
+        hitCounts = `[${score.count_300}/${score.count_100}/${score.count_50}/${score.count_miss}]`;
+        break;
       case GameMode.MANIA:
-        hitCounts = `[${score.count_geki}/${score.count_300}/${score.count_katu}/${score.count_100}/${score.count_50}/${score.count_miss}]`
-        break
+        hitCounts = `[${score.count_geki}/${score.count_300}/${score.count_katu}/${score.count_100}/${score.count_50}/${score.count_miss}]`;
+        break;
     }
 
-    const description =
-      `${getScoreRankEmoji(score.grade)} ${score.mods}` +
-      " · " +
-      numberWith(score.total_score, ",") +
-      " · " +
-      ` ${score.accuracy.toFixed(2)}% ${bold(time(whenPlayedDate, "R"))}` +
-      "\n" +
-      `${bold(beatmap.is_ranked ? score.performance_points.toFixed(2) : "~ ")}pp` +
-      " · " +
-      `${bold("x" + score.max_combo)} / ${beatmap.max_combo}` +
-      " · " +
-      hitCounts
+    const description
+      = `${getScoreRankEmoji(score.grade)} ${score.mods}`
+        + ` · ${
+       numberWith(score.total_score, ",")
+       } · `
+       + ` ${score.accuracy.toFixed(2)}% ${bold(time(whenPlayedDate, "R"))}`
+       + `\n`
+       + `${bold(beatmap.is_ranked ? score.performance_points.toFixed(2) : "~ ")}pp`
+       + ` · `
+       + `${bold(`x${score.max_combo}`)} / ${beatmap.max_combo}`
+       + ` · ${
+       hitCounts}`;
 
     const scoreEmbed = new EmbedBuilder()
       .setAuthor({
@@ -258,29 +259,29 @@ export class EmbedPresetsUtility extends Utility {
       .setFooter({
         text: `${score.game_mode_extended} · played on osu!sunrise`,
       })
-      .setDescription(description)
+      .setDescription(description);
 
-    return scoreEmbed
+    return scoreEmbed;
   }
 
   public async getCustomBeatmapStatusChangeEmbed(data: CustomBeatmapStatusChangeResponse) {
-    const { bat, beatmap, new_status, old_status } = data
+    const { bat, beatmap, new_status, old_status } = data;
 
     const beatmapBannerImage = await tryToGetImage(
       `https://assets.ppy.sh/beatmaps/${beatmap.beatmapset_id}/covers/cover@2x.jpg`,
       "https://osu.ppy.sh/assets/images/default-bg.7594e945.png",
-    )
+    );
 
-    const color = await getAverageColor(beatmapBannerImage)
+    const color = await getAverageColor(beatmapBannerImage);
 
     const pp = await getBeatmapByIdPp({
       path: {
         id: beatmap.id,
       },
-    })
+    });
 
     if (!pp || pp.error) {
-      throw new Error("EmbedPresetsUtility: Couldn't fetch beatmap performance data")
+      throw new Error("EmbedPresetsUtility: Couldn't fetch beatmap performance data");
     }
 
     const ppFields = beatmap.ranked
@@ -296,7 +297,7 @@ export class EmbedPresetsUtility extends Utility {
             inline: true,
           },
         ]
-      : []
+      : [];
 
     const scoreEmbed = new EmbedBuilder()
       .setAuthor({
@@ -306,9 +307,9 @@ export class EmbedPresetsUtility extends Utility {
       })
       .setColor(`${color.hex}` as HexColorString)
       .setTitle(
-        `${beatmap.artist} - ${beatmap.title}` +
-          " " +
-          `[${beatmap.version}] [★${getBeatmapStarRating(beatmap, beatmap.mode)}]`,
+        `${beatmap.artist} - ${beatmap.title}`
+        + " "
+        + `[${beatmap.version}] [★${getBeatmapStarRating(beatmap, beatmap.mode)}]`,
       )
       .setImage(beatmapBannerImage)
       .setURL(`https://${config.sunrise.uri}/beatmaps/${beatmap.id}`)
@@ -334,10 +335,7 @@ export class EmbedPresetsUtility extends Utility {
         },
         {
           name: "Length",
-          value: `${config.json.emojis.totalLengthIcon} ${secondsToMinutes(beatmap.total_length, {
-            asHours: true,
-            pad: true,
-          })}`,
+          value: `${config.json.emojis.totalLengthIcon} ${secondsToMinutes(beatmap.total_length)}`,
           inline: true,
         },
         {
@@ -360,8 +358,8 @@ export class EmbedPresetsUtility extends Utility {
           value: `${config.json.emojis.countSlidersIcon} ${beatmap.count_sliders}`,
           inline: true,
         },
-      )
+      );
 
-    return scoreEmbed
+    return scoreEmbed;
   }
 }

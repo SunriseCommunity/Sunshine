@@ -1,83 +1,90 @@
-import { jest, mock } from "bun:test"
-
-import {
+import { faker } from "@faker-js/faker";
+import type { Command } from "@sapphire/framework";
+import { CommandStore, container } from "@sapphire/framework";
+import type { DeepPartial } from "@sapphire/utilities";
+import { jest, mock } from "bun:test";
+import type {
   ApplicationCommand,
-  ApplicationCommandType,
   ButtonInteraction,
+  ModalSubmitInteraction,
+  User,
+} from "discord.js";
+import {
+  ApplicationCommandType,
   InteractionType,
   Locale,
-  ModalSubmitInteraction,
   PermissionsBitField,
-  User,
-} from "discord.js"
+} from "discord.js";
 
-import { faker } from "@faker-js/faker"
-import { Command, CommandStore, container } from "@sapphire/framework"
-import type { DeepPartial } from "@sapphire/utilities"
-import { buildCustomId } from "../utils/discord.util"
-import type { PaginationStore } from "../types/store.types"
-import { GameMode, BeatmapStatusWeb } from "../types/api"
 import type {
-  ScoreResponse,
   BeatmapResponse,
+  CountryCode,
+  ScoreResponse,
   UserResponse,
   UserStatsResponse,
   UserWithStats,
-} from "../types/api"
+} from "../types/api";
+import { BeatmapStatusWeb, GameMode } from "../types/api";
+import type { PaginationStore } from "../types/store.types";
+import { buildCustomId } from "../utils/discord.util";
 
 function autoMock<T extends object>(base: Partial<T>): T {
   return new Proxy(base as T, {
     get(target: any, prop: string | symbol) {
       if (prop in target) {
-        return target[prop]
+        return target[prop];
       }
 
-      return mock(async (...args: any[]) => null)
+      return mock(async (..._args: any[]) => null);
     },
-  }) as unknown as T
+  }) as unknown as T;
 }
 
-const createBaseEntity = () => ({
-  id: faker.string.uuid(),
-  createdAt: faker.date.past(),
-  createdTimestamp: Date.now(),
-})
+function createBaseEntity() {
+  return {
+    id: faker.string.uuid(),
+    createdAt: faker.date.past(),
+    createdTimestamp: Date.now(),
+  };
+}
 
-const createBaseInteraction = () => ({
-  ...createBaseEntity(),
-  applicationId: faker.string.uuid(),
-  channelId: faker.string.uuid(),
-  guildId: faker.string.uuid(),
-  locale: Locale.French,
-})
+function createBaseInteraction() {
+  return {
+    ...createBaseEntity(),
+    applicationId: faker.string.uuid(),
+    channelId: faker.string.uuid(),
+    guildId: faker.string.uuid(),
+    locale: Locale.French,
+  };
+}
 
-export class FakerGenerator {
-  static generatePiece() {
+export const FakerGenerator = {
+  generatePiece() {
     return {
       name: faker.string.alpha(10),
       store: container?.utilities?.store ?? {},
       path: faker.system.filePath(),
       root: faker.system.directoryPath(),
-    }
-  }
+    };
+  },
 
-  static generateLoaderContext() {
+  generateLoaderContext() {
     return {
       name: faker.string.alpha(10),
       store: new CommandStore(),
       path: faker.system.filePath(),
       root: faker.system.directoryPath(),
-    }
-  }
+    };
+  },
 
-  static generateCustomId(
+  generateCustomId(
     options?: Partial<{
-      prefix: string
-      userId: string
+      prefix: string;
+      userId: string;
       ctx: {
-        dataStoreId?: string | undefined
-        data?: string[] | undefined
-      }
+        dataStoreId?: string | undefined;
+        data?: string[] | undefined;
+      };
     }>,
   ) {
     return buildCustomId(
@@ -87,10 +94,10 @@ export class FakerGenerator {
         data: options?.ctx?.data ?? undefined,
         dataStoreId: options?.ctx?.dataStoreId ?? undefined,
       },
-    )
-  }
+    );
+  },
 
-  static generateInteraction(
+  generateInteraction(
     options?: DeepPartial<Command.ChatInputCommandInteraction>,
   ): Command.ChatInputCommandInteraction {
     return autoMock<Command.ChatInputCommandInteraction>({
@@ -106,10 +113,10 @@ export class FakerGenerator {
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static generateModalSubmitInteraction(
+  generateModalSubmitInteraction(
     options?: DeepPartial<ModalSubmitInteraction>,
   ): ModalSubmitInteraction {
     return autoMock<ModalSubmitInteraction>({
@@ -121,10 +128,10 @@ export class FakerGenerator {
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static generateButtonInteraction(options?: DeepPartial<ButtonInteraction>): ButtonInteraction {
+  generateButtonInteraction(options?: DeepPartial<ButtonInteraction>): ButtonInteraction {
     return autoMock<ButtonInteraction>({
       ...createBaseInteraction(),
       user: options?.user ?? FakerGenerator.generateUser(),
@@ -134,21 +141,21 @@ export class FakerGenerator {
       ephemeral: faker.datatype.boolean(),
       replied: faker.datatype.boolean(),
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static withSubcommand<T extends Command.ChatInputCommandInteraction>(
+  withSubcommand<T extends Command.ChatInputCommandInteraction>(
     interaction: T,
     subcommand: string,
   ): T {
-    interaction.options.getSubcommand = jest.fn().mockReturnValue(subcommand)
-    interaction.options.getSubcommandGroup = jest.fn().mockReturnValue(null)
+    interaction.options.getSubcommand = jest.fn().mockReturnValue(subcommand);
+    interaction.options.getSubcommandGroup = jest.fn().mockReturnValue(null);
 
-    return interaction
-  }
+    return interaction;
+  },
 
-  static generateCommand(options?: DeepPartial<ApplicationCommand<{}>>): ApplicationCommand<{}> {
-    return autoMock<ApplicationCommand<{}>>({
+  generateCommand(options?: DeepPartial<ApplicationCommand<object>>): ApplicationCommand<object> {
+    return autoMock<ApplicationCommand<object>>({
       ...createBaseEntity(),
       applicationId: faker.string.uuid(),
       guildId: faker.string.uuid(),
@@ -158,12 +165,12 @@ export class FakerGenerator {
       defaultMemberPermissions: new PermissionsBitField(PermissionsBitField.Flags.SendMessages),
       description: faker.lorem.sentence(),
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static generateUser(options?: DeepPartial<User>): User {
-    const userId = options?.id ?? faker.string.uuid()
-    const username = options?.username ?? faker.internet.username()
+  generateUser(options?: DeepPartial<User>): User {
+    const userId = options?.id ?? faker.string.uuid();
+    const username = options?.username ?? faker.internet.username();
 
     return autoMock<User>({
       ...createBaseEntity(),
@@ -180,13 +187,13 @@ export class FakerGenerator {
       displayAvatarURL: () => faker.internet.url(),
       toString: () => `<@${userId}>`,
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static generatePaginationData(options?: DeepPartial<PaginationStore>): PaginationStore {
+  generatePaginationData(options?: DeepPartial<PaginationStore>): PaginationStore {
     return autoMock<PaginationStore>({
       handleSetPage:
-        options?.handleSetPage ?? mock(async (state: any) => ({ embed: {}, buttonsRow: {} })),
+        options?.handleSetPage ?? mock(async (_state: any) => ({ embed: {}, buttonsRow: {} })),
       state: {
         pageSize: options?.state?.pageSize ?? 10,
         totalPages: options?.state?.totalPages ?? 5,
@@ -194,14 +201,14 @@ export class FakerGenerator {
         ...(options?.state as any),
       },
       ...(options as any),
-    })
-  }
+    });
+  },
 
-  static generateOsuUser(options?: Partial<UserResponse>): UserResponse {
+  generateOsuUser(options?: Partial<UserResponse>): UserResponse {
     return {
       user_id: faker.number.int({ min: 1, max: 1000000 }),
       username: faker.internet.username(),
-      country_code: faker.location.countryCode(),
+      country_code: faker.location.countryCode() as CountryCode,
       avatar_url: "https://placehold.co/400x400",
       banner_url: "https://placehold.co/1200x300",
       register_date: new Date().toISOString(),
@@ -213,11 +220,11 @@ export class FakerGenerator {
       user_status: "online",
       description: null,
       ...options,
-    }
-  }
+    };
+  },
 
-  static generateScore(options?: Partial<ScoreResponse>): ScoreResponse {
-    const mockUser = options?.user ?? FakerGenerator.generateOsuUser()
+  generateScore(options?: Partial<ScoreResponse>): ScoreResponse {
+    const mockUser = options?.user ?? FakerGenerator.generateOsuUser();
 
     return {
       id: faker.number.int({ min: 1, max: 1000000 }),
@@ -245,10 +252,10 @@ export class FakerGenerator {
       mods_int: 0,
       leaderboard_rank: null,
       ...options,
-    }
-  }
+    };
+  },
 
-  static generateBeatmap(options?: Partial<BeatmapResponse>): BeatmapResponse {
+  generateBeatmap(options?: Partial<BeatmapResponse>): BeatmapResponse {
     return {
       id: faker.number.int({ min: 1, max: 1000000 }),
       beatmapset_id: faker.number.int({ min: 1, max: 100000 }),
@@ -284,11 +291,11 @@ export class FakerGenerator {
       creator_id: faker.number.int({ min: 1, max: 100000 }),
       beatmap_nominator_user: undefined,
       ...options,
-    }
-  }
+    };
+  },
 
-  static generateUserStats(options?: Partial<UserStatsResponse>): UserStatsResponse {
-    const userId = options?.user_id ?? faker.number.int({ min: 1, max: 1000000 })
+  generateUserStats(options?: Partial<UserStatsResponse>): UserStatsResponse {
+    const userId = options?.user_id ?? faker.number.int({ min: 1, max: 1000000 });
 
     return {
       user_id: userId,
@@ -308,22 +315,22 @@ export class FakerGenerator {
       best_country_rank: faker.number.int({ min: 1, max: 5000 }),
       best_country_rank_date: new Date().toISOString(),
       ...options,
-    }
-  }
+    };
+  },
 
-  static generateUserWithStats(options?: {
-    user?: Partial<UserResponse>
-    stats?: Partial<UserStatsResponse>
+  generateUserWithStats(options?: {
+    user?: Partial<UserResponse>;
+    stats?: Partial<UserStatsResponse>;
   }): UserWithStats {
-    const user = FakerGenerator.generateOsuUser(options?.user)
+    const user = FakerGenerator.generateOsuUser(options?.user);
     const stats = FakerGenerator.generateUserStats({
       user_id: user.user_id,
       ...options?.stats,
-    })
+    });
 
     return {
       user,
       stats,
-    }
-  }
-}
+    };
+  },
+};

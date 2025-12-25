@@ -1,4 +1,4 @@
-import { config } from "./src/lib/configs/env"
+import { config } from "./src/lib/configs/env";
 
 export default {
   input: `https://api.${config.sunrise.uri}/openapi/v1.json`,
@@ -14,4 +14,4 @@ export default {
       name: "@hey-api/typescript",
     },
   ],
-}
+};
