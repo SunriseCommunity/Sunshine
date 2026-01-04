@@ -14,11 +14,13 @@ export function addLinkSubcommand(command: SlashCommandSubcommandBuilder) {
       o
         .setName("username")
         .setDescription("Your username on the server")
-        .setRequired(false)
+        .setRequired(false),
+    )
+    .addStringOption(o =>
+      o
         .setName("id")
         .setDescription("Your account ID on the server")
-        .setRequired(false),
-    );
+        .setRequired(false));
 }
 
 export async function chatInputRunLinkSubcommand(
