@@ -4,14 +4,20 @@ import { bold } from "discord.js";
 
 import type { OsuCommand } from "../../commands/osu.command";
 import { ExtendedError } from "../../lib/extended-error";
-import { getUserSearch } from "../../lib/types/api";
+import { getUserById, getUserSearch } from "../../lib/types/api";
 
 export function addLinkSubcommand(command: SlashCommandSubcommandBuilder) {
   return command
     .setName("link")
     .setDescription("Link your osu!sunrise profile")
     .addStringOption(o =>
-      o.setName("username").setDescription("Your username on the server").setRequired(true),
+      o
+        .setName("username")
+        .setDescription("Your username on the server")
+        .setRequired(false)
+        .setName("id")
+        .setDescription("Your account ID on the server")
+        .setRequired(false),
     );
 }
 
@@ -21,21 +27,47 @@ export async function chatInputRunLinkSubcommand(
 ) {
   await interaction.deferReply();
 
-  const userUsernameOption = interaction.options.getString("username", true);
+  const userUsernameOption = interaction.options.getString("username");
+  const userIdOption = interaction.options.getString("id");
 
-  const userSearchResponse = await getUserSearch({
-    query: { limit: 1, page: 1, query: userUsernameOption },
-  });
-
-  if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
-    throw new ExtendedError(
-      userSearchResponse?.error?.detail
-      || userSearchResponse?.error?.title
-      || "Couldn't fetch user!",
-    );
+  if (!userUsernameOption && !userIdOption) {
+    throw new ExtendedError("You must provide either a username or an ID to link your account.");
   }
 
-  const user = userSearchResponse.data[0]!;
+  let user = null;
+
+  if (userIdOption) {
+    const userSearchResponseById = await getUserById({ path: { id: Number.parseInt(userIdOption, 10) } });
+
+    if (userSearchResponseById.error || !userSearchResponseById.data) {
+      throw new ExtendedError(
+        userSearchResponseById?.error?.detail
+        || userSearchResponseById?.error?.title
+        || "Couldn't fetch user by ID!",
+      );
+    }
+    user = userSearchResponseById.data;
+  }
+
+  if (userUsernameOption && !user) {
+    const userSearchResponse = await getUserSearch({
+      query: { limit: 1, page: 1, query: userUsernameOption },
+    });
+
+    if (userSearchResponse.error || userSearchResponse.data.length <= 0) {
+      throw new ExtendedError(
+        userSearchResponse?.error?.detail
+        || userSearchResponse?.error?.title
+        || "Couldn't fetch user!",
+      );
+    }
+
+    user = userSearchResponse.data[0];
+  }
+
+  if (!user) {
+    throw new ExtendedError("Couldn't find the specified user!");
+  }
 
   const { db } = this.container;
 
