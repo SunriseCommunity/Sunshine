@@ -13,6 +13,11 @@ It is a part of the Sunrise project, which aims to create a fully functional osu
 
 This project also has **automated testing** setup with GitHub Actions! ✨
 
+## Preview 🖼️
+
+![New Project (3)](https://github.com/user-attachments/assets/5cba5334-3455-4a56-aa9a-8930bb16abfd)
+
+
 ## Installation (with docker) 🐳
 1. Clone the repository
 2. Create copy of `.env.example` file as `.env` and fill all required fields
@@ -30,10 +35,6 @@ docker compose up -d
 3. Update `config/dev.json` with you own emojis ids (You can find needed files in `data/emojis`)
 4. Create copy of `.env.example` file as `.env` and fill all required fields
 5. Start the application with `bun run start` or `bun run dev`
-
-## Preview 🖼️
-
-![New Project (3)](https://github.com/user-attachments/assets/5cba5334-3455-4a56-aa9a-8930bb16abfd)
 
 ## Contributing 💖
 
