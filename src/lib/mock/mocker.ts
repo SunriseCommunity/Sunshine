@@ -55,6 +55,7 @@ export class Mocker {
     };
 
     this.createDatabaseInMemory();
+    this.mockExternalHttpDependencies();
   }
 
   static async resetSapphireClientInstance() {
@@ -110,6 +111,16 @@ export class Mocker {
 
   static mockApiRequests<T extends Record<string, (...args: any[]) => Promise<any>>>(mocks: T) {
     mock.module(path.resolve(process.cwd(), "src", "lib", "types", "api"), () => mocks);
+  }
+
+  private static mockExternalHttpDependencies() {
+    mock.module("fast-average-color-node", () => ({
+      getAverageColor: async () => ({ hex: "#000000", hexa: "#000000ff" }),
+    }));
+
+    mock.module(path.resolve(process.cwd(), "src", "lib", "utils", "fetch.util"), () => ({
+      tryToGetImage: async (url: string) => url,
+    }));
   }
 
   private static createDatabaseInMemory() {
