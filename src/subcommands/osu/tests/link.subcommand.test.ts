@@ -10,6 +10,7 @@ import {
   jest,
   mock,
 } from "bun:test";
+import { escapeMarkdown } from "discord.js";
 
 import { OsuCommand } from "../../../commands/osu.command";
 import { ExtendedError } from "../../../lib/extended-error";
@@ -63,7 +64,7 @@ describe("Osu Link Subcommand", () => {
     });
 
     const expectedEmbed = container.utilities.embedPresets.getSuccessEmbed(
-      `🙂 You are now **${username}**!`,
+      `🙂 You are now **${escapeMarkdown(username)}**!`,
     );
 
     expect(errorHandler).not.toBeCalled();
@@ -120,7 +121,7 @@ describe("Osu Link Subcommand", () => {
     });
 
     const expectedEmbed = container.utilities.embedPresets.getSuccessEmbed(
-      `🙂 You are now **${username}**!`,
+      `🙂 You are now **${escapeMarkdown(username)}**!`,
     );
 
     expect(errorHandler).not.toBeCalled();
@@ -182,7 +183,7 @@ describe("Osu Link Subcommand", () => {
     });
 
     const expectedEmbed = container.utilities.embedPresets.getSuccessEmbed(
-      `🙂 You are now **${username}**!`,
+      `🙂 You are now **${escapeMarkdown(username)}**!`,
     );
 
     expect(errorHandler).not.toBeCalled();
