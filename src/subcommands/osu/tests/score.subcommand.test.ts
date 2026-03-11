@@ -236,6 +236,55 @@ describe("Osu Score Subcommand", () => {
     );
   });
 
+  it("should escape markdown formatting in beatmap title and artist", async () => {
+    const editReplyMock = mock();
+    const scoreId = faker.number.int({ min: 1, max: 1000000 });
+
+    const mockScore = FakerGenerator.generateScore({ id: scoreId, mods: "**HD**" });
+    const mockBeatmap = FakerGenerator.generateBeatmap({
+      id: mockScore.beatmap_id,
+      title: "**bold title**",
+      artist: "*italic artist*",
+      version: "~~strike~~",
+    });
+
+    const interaction = FakerGenerator.withSubcommand(
+      FakerGenerator.generateInteraction({
+        deferReply: mock(),
+        editReply: editReplyMock,
+        options: {
+          getString: jest.fn().mockReturnValue(scoreId.toString()),
+        },
+      }),
+      "score",
+    );
+
+    Mocker.mockApiRequests({
+      getScoreById: async () => ({ data: mockScore }),
+      getBeatmapById: async () => ({ data: mockBeatmap }),
+    });
+
+    await osuCommand.chatInputRun(interaction, {
+      commandId: faker.string.uuid(),
+      commandName: "score",
+    });
+
+    expect(errorHandler).not.toBeCalled();
+
+    const embedData = editReplyMock.mock.calls[0]![0].embeds[0].data;
+
+    expect(embedData.title).not.toContain("**bold title**");
+    expect(embedData.title).not.toContain("*italic artist*");
+    expect(embedData.title).not.toContain("~~strike~~");
+
+    expect(embedData.title).toContain("\\*\\*bold title\\*\\*");
+    expect(embedData.title).toContain("\\*italic artist\\*");
+    expect(embedData.title).toContain("\\~\\~strike\\~\\~");
+
+    expect(embedData.description).not.toContain("**HD**");
+    expect(embedData.description).toContain("\\*\\*HD\\*\\*");
+  });
+
   it("should throw error when beatmap is not found", async () => {
     const scoreId = faker.number.int({ min: 1, max: 1000000 });
 

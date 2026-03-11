@@ -1,7 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { Utility } from "@sapphire/plugin-utilities-store";
 import type { HexColorString } from "discord.js";
-import { bold, EmbedBuilder, inlineCode, time } from "discord.js";
+import { bold, EmbedBuilder, escapeMarkdown as esc, inlineCode, time } from "discord.js";
 import { getAverageColor } from "fast-average-color-node";
 
 import { config } from "../lib/configs/env";
@@ -75,7 +75,7 @@ export class EmbedPresetsUtility extends Utility {
     const userStatus
       = user.user_status === "Offline"
         ? `🍂 ${bold(`Offline.`)}\n` + `Last time online: ${bold(time(lastOnlineTime, "R"))}`
-        : `🌿 ${bold(user.user_status)}`;
+        : `🌿 ${bold(esc(user.user_status))}`;
 
     const infoValues = [
       { name: "Status", value: userStatus },
@@ -229,7 +229,7 @@ export class EmbedPresetsUtility extends Utility {
     }
 
     const description
-      = `${getScoreRankEmoji(score.grade)} ${score.mods}`
+      = `${getScoreRankEmoji(score.grade)} ${esc(score.mods ?? "")}`
         + ` · ${
        numberWith(score.total_score, ",")
        } · `
@@ -249,7 +249,7 @@ export class EmbedPresetsUtility extends Utility {
       })
       .setColor(`${color.hex}` as HexColorString)
       .setTitle(
-        `${beatmap.artist} - ${beatmap.title} [${beatmap.version}] [★${getBeatmapStarRating(
+        `${esc(beatmap.artist ?? "")} - ${esc(beatmap.title ?? "")} [${esc(beatmap.version)}] [★${getBeatmapStarRating(
           beatmap,
           score.game_mode,
         )}]`,
@@ -307,9 +307,9 @@ export class EmbedPresetsUtility extends Utility {
       })
       .setColor(`${color.hex}` as HexColorString)
       .setTitle(
-        `${beatmap.artist} - ${beatmap.title}`
+        `${esc(beatmap.artist ?? "")} - ${esc(beatmap.title ?? "")}`
         + " "
-        + `[${beatmap.version}] [★${getBeatmapStarRating(beatmap, beatmap.mode)}]`,
+        + `[${esc(beatmap.version)}] [★${getBeatmapStarRating(beatmap, beatmap.mode)}]`,
       )
       .setImage(beatmapBannerImage)
       .setURL(`https://${config.sunrise.uri}/beatmaps/${beatmap.id}`)
@@ -319,12 +319,12 @@ export class EmbedPresetsUtility extends Utility {
       .setFields(
         {
           name: bold("New beatmap status"),
-          value: `${getBeatmapStatusIcon(new_status)} ${bold(new_status)}`,
+          value: `${getBeatmapStatusIcon(new_status)} ${bold(esc(new_status))}`,
           inline: true,
         },
         {
           name: "Previous beatmap status",
-          value: `${getBeatmapStatusIcon(old_status)} ${old_status}`,
+          value: `${getBeatmapStatusIcon(old_status)} ${esc(old_status)}`,
           inline: true,
         },
         ...ppFields,

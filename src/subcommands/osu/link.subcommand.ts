@@ -1,6 +1,6 @@
 import type { Subcommand } from "@sapphire/plugin-subcommands";
 import type { SlashCommandSubcommandBuilder } from "discord.js";
-import { bold } from "discord.js";
+import { bold, escapeMarkdown as esc } from "discord.js";
 
 import type { OsuCommand } from "../../commands/osu.command";
 import { ExtendedError } from "../../lib/extended-error";
@@ -85,6 +85,6 @@ export async function chatInputRunLinkSubcommand(
   const { embedPresets } = this.container.utilities;
 
   return await interaction.editReply({
-    embeds: [embedPresets.getSuccessEmbed(`🙂 You are now ${bold(user.username)}!`)],
+    embeds: [embedPresets.getSuccessEmbed(`🙂 You are now ${bold(esc(user.username))}!`)],
   });
 }
