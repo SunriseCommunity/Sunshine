@@ -3,6 +3,7 @@ import type { HexColorString, SlashCommandSubcommandBuilder } from "discord.js";
 import {
   bold,
   EmbedBuilder,
+  escapeMarkdown as esc,
   hyperlink,
   time,
 } from "discord.js";
@@ -178,14 +179,14 @@ function createHandleForScoresPagination(
 
       const result
         = `${bold(`#${currentScorePlacement}`)} ${hyperlink(
-          `${beatmap.artist} - ${beatmap?.title} [${beatmap?.version}]`,
+          `${esc(beatmap.artist ?? "")} - ${esc(beatmap?.title ?? "")} [${esc(beatmap?.version)}]`,
           `https://${config.sunrise.uri}/beatmaps/${beatmap.id}`,
         )} [★${getBeatmapStarRating(beatmap, curr.game_mode)}]\n`
         + `${getScoreRankEmoji(curr.grade)} ${bold(
           beatmap.is_ranked ? curr.performance_points.toFixed(2) : "~ ",
         )}pp (${curr.accuracy.toFixed(2)}%) [${bold(`x${curr.max_combo}`)} / ${
           beatmap.max_combo
-        }] ${curr.count_miss}${missIcon} ${curr.mods ? bold(curr.mods) : ""}  ${bold(
+        }] ${curr.count_miss}${missIcon} ${curr.mods ? bold(esc(curr.mods)) : ""}  ${bold(
           time(whenPlayedDate, "R"),
         )}`;
 
@@ -198,7 +199,7 @@ function createHandleForScoresPagination(
     const color = await getAverageColor(user.avatar_url);
 
     return new EmbedBuilder()
-      .setTitle(`${type} Scores of ${user.username} in ${gamemode}`)
+      .setTitle(`${type} Scores of ${esc(user.username)} in ${gamemode}`)
       .setColor(`${color.hex}` as HexColorString)
       .setURL(`https://${config.sunrise.uri}/user/${user.user_id}`)
       .setThumbnail(user.avatar_url ?? "")
